@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'carts',
     'orders',
     "debug_toolbar",
+    "djmoney",
+    'djmoney.contrib.exchange',
 ]
 
 MIDDLEWARE = [
@@ -158,4 +160,10 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 
+# Exchange rate backend
+OPEN_EXCHANGE_RATES_APP_ID = 'a3f92ade28e748df8874f4d4e6932962'
 
+# Default currency
+DEFAULT_CURRENCY = 'USD'
+CURRENCIES = ('USD', 'UAH')
+CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'UAH')]

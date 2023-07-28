@@ -5,6 +5,10 @@ from accounts.models import Account
 from django.db.models import Avg, Count
 import random
 from .util import generate_product_number
+from djmoney.models.fields import MoneyField
+from moneyed import Money
+from djmoney.contrib.exchange.models import convert_money
+
 
 def create_code():
     code = ''.join([str(random.randint(0, 9)) for i in range(5)])
@@ -15,13 +19,17 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField(max_length=500, blank=True)
     product_code = models.CharField(max_length=5, unique=True, blank=True)
-    price = models.IntegerField()
+    price = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
     images = models.ImageField(upload_to="photos/products")
     stock = models.IntegerField()
     is_available = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
+
+    def uah_price(self):
+        price_in_uah = convert_money(self.price, 'UAH')
+        return price_in_uah
 
     def get_url(self):
         return reverse("product_detail", args=[self.category.slug, self.slug])
@@ -47,6 +55,15 @@ class Product(models.Model):
         if self.product_code == "":
             self.product_code = generate_product_number()
         return super().save(*args, **kwargs)
+    
+
+class Discount(models.Model):
+    name = models.CharField(max_length=100, blank=True)
+    rate = models.DecimalField(max_digits=4, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
     
 
 class VariationManager(models.Manager):
