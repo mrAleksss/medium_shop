@@ -6,7 +6,6 @@ from django.db.models import Avg, Count
 import random
 from .util import generate_product_number
 from djmoney.models.fields import MoneyField
-from moneyed import Money
 from djmoney.contrib.exchange.models import convert_money
 
 
@@ -27,6 +26,13 @@ class Product(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def calculate_price(self):
+        tier = PriceTier.objects.filter(product=self).order_by('-discount').first()
+        if tier:
+            return round(self.price.amount * (1 - tier.discount / 100), 2)
+        return self.price
+            
     def uah_price(self):
         price_in_uah = convert_money(self.price, 'UAH')
         return price_in_uah
@@ -57,12 +63,13 @@ class Product(models.Model):
         return super().save(*args, **kwargs)
     
 
-class Discount(models.Model):
-    name = models.CharField(max_length=100, blank=True)
-    rate = models.DecimalField(max_digits=4, decimal_places=2)
+class PriceTier(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="tier")
+    min_quantity = models.PositiveIntegerField()
+    discount = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return self.name
+        return str(self.discount)
 
     
 

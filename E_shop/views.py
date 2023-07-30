@@ -1,9 +1,12 @@
 from django.shortcuts import render
-from store.models import Product, ReviewRating
+from store.models import Product, ReviewRating, PriceTier
 
 
 def home(request):
     products = Product.objects.all().filter(is_available=True).order_by('-created_date')
+    for product in products:
+        product.calculated_price = product.calculate_price
+ 
     reviews = None
     # Get the reviews
     for product in products:
@@ -15,3 +18,5 @@ def home(request):
     }
 
     return render(request, "home.html", context)
+
+

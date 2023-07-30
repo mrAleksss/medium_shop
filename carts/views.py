@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from store.models import Product, Variation
+from store.models import Product, Variation, PriceTier
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+import decimal
 
 # test import
 from orders.forms import OrderForm
 from orders.models import Order
-from django.http import HttpResponse
+
 
 
 def _cart_id(request):
@@ -179,12 +180,13 @@ def cart(request, total=0, quantity=0, cart_items=None):
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
             cart = Cart.objects.get(cart_id=_cart_id(request))
-            cart_items = CartItem.objects.filter(cart=cart, is_active=True)   
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True) 
+    
         for cart_item in cart_items:
-            total += (cart_item.product.price*cart_item.quantity)
+            total += (cart_item.discounted_price*cart_item.quantity)
             quantity += cart_item.quantity
-        tax = (total * 2) / 100
-        grand_total = tax + total
+
+
     except ObjectDoesNotExist:
         pass
     
@@ -192,8 +194,6 @@ def cart(request, total=0, quantity=0, cart_items=None):
         "total": total,
         "quantity": quantity, 
         "cart_items": cart_items,
-        "grand_total": grand_total,
-        "tax": tax,
     }
 
     return render(request, "store/cart.html", context)
@@ -210,7 +210,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
         for cart_item in cart_items:
-            total += (cart_item.product.price*cart_item.quantity)
+            total += (cart_item.product.price*(cart_item.quantity))
             quantity += cart_item.quantity
         tax = (total * 2) / 100
         grand_total = tax + total
@@ -240,3 +240,4 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         'form': form,
     }
     return render(request, 'store/checkout.html', context)
+

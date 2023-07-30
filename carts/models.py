@@ -1,5 +1,5 @@
 from django.db import models
-from store.models import Product, Variation
+from store.models import Product, Variation, PriceTier
 from accounts.models import Account
 
 
@@ -18,6 +18,21 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField()
     is_active = models.BooleanField(default=True)
+
+    def get_tier(self):
+        try:
+            return PriceTier.objects.get(product=self.product, min_quantity__lte=self.quantity)
+        except PriceTier.DoesNotExist:
+            return None
+      
+    @property
+    def discounted_price(self):
+        tier = self.get_tier()
+        if tier:
+            return self.product.price * (1 - tier.discount/100)
+        else:
+            return self.product.price
+
 
     def sub_total(self):
         return self.product.price * self.quantity

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, ReviewRating, ProductGallery
+from .models import Product, ReviewRating, ProductGallery, PriceTier
 from category.models import Category
 from django.db.models import Q
 
@@ -19,12 +19,21 @@ def store(request, category_slug=None):
     if category_slug != None:
         categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
+
+        # get discount price 
+        for product in products:
+            product.calculated_price = product.calculate_price
+
         paginator = Paginator(products, 6)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
         products_count = products.count()
     else:
         products = Product.objects.all().filter(is_available=True).order_by('id')
+        # get discount price 
+        for product in products:
+            product.calculated_price = product.calculate_price
+
         paginator = Paginator(products, 6)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
@@ -42,6 +51,8 @@ def product_detail(request, category_slug, product_slug):
     try:
         single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
         in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=single_product).exists()
+
+        
     except Exception as e:
         raise e
     
