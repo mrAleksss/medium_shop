@@ -19,23 +19,31 @@ class CartItem(models.Model):
     quantity = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
-    def get_tier(self):
+    def get_tiers(self):
         try:
-            return PriceTier.objects.get(product=self.product, min_quantity__lte=self.quantity)
+            return PriceTier.objects.filter(product=self.product).order_by('-discount')
+            # return PriceTier.objects.filter(product=self.product, min_quantity__lte=self.quantity)
         except PriceTier.DoesNotExist:
             return None
       
     @property
     def discounted_price(self):
-        tier = self.get_tier()
-        if tier:
-            return self.product.price * (1 - tier.discount/100)
-        else:
-            return self.product.price
+        tiers = self.get_tiers()
+        if tiers:
+            for tier in tiers:
+                # new line
+                if self.quantity >= tier.min_quantity:
+                    return self.product.price * (1 - tier.discount/100)
+            else:
+                return self.product.price
+        return self.product.price
 
 
-    def sub_total(self):
+    def base_total(self):
         return self.product.price * self.quantity
+    
+    def discounted_total(self):
+        return self.discounted_price * self.quantity
 
     def __unicode__(self):
         return self.product

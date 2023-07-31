@@ -36,7 +36,7 @@ def payments(request):
         orderproduct.user_id = request.user.id
         orderproduct.product_id = item.product_id
         orderproduct.quantity = item.quantity
-        orderproduct.product_price = item.product.price.amount
+        orderproduct.product_price = item.discounted_price
         orderproduct.ordered = True
         orderproduct.save() 
 
@@ -83,13 +83,9 @@ def place_order(request, total=0, quantity=0):
     if cart_count <= 0:
         return redirect("store")
 
-    grand_total = 0
-    tax = 0
     for cart_item in cart_items:
-        total += (cart_item.product.price.amount*cart_item.quantity)
+        total += (cart_item.discounted_price.amount*cart_item.quantity)
         quantity += cart_item.quantity
-    tax = (total * 2) / 100
-    grand_total = tax + total
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -106,8 +102,7 @@ def place_order(request, total=0, quantity=0):
             data.state = form.cleaned_data['state']
             data.city = form.cleaned_data['city']
             data.order_note = form.cleaned_data['order_note']
-            data.tax = tax
-            data.order_total = grand_total
+            data.order_total = total
             data.ip = request.META.get('REMOTE_ADDR')
             data.save()
             # Generate order number
@@ -124,9 +119,7 @@ def place_order(request, total=0, quantity=0):
             context = {
                 'order': order,
                 'cart_items': cart_items,
-                'tax': tax,
                 'total': total,
-                'grand_total': grand_total,
             }
             return render(request, "orders/payments.html", context)
         
@@ -160,9 +153,9 @@ def order_complete(request):
         order = Order.objects.get(order_number=order_number, is_ordered=True)
         ordered_products = OrderProduct.objects.filter(order_id=order.id)
 
-        subtotal = 0
+        total = 0
         for i in ordered_products:
-            subtotal += i.product_price * i.quantity
+            total += i.product_price * i.quantity
 
         payment = Payment.objects.get(payment_id=transID)
 
@@ -172,7 +165,7 @@ def order_complete(request):
             "order_number": order.order_number,
             "transID": payment.payment_id,
             "payment": payment,
-            "subtotal": subtotal,
+            "total": total,
         }
 
         return render(request, 'orders/order_complete.html', context)
