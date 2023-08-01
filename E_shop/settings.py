@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+ 
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -167,3 +170,5 @@ OPEN_EXCHANGE_RATES_APP_ID = 'a3f92ade28e748df8874f4d4e6932962'
 DEFAULT_CURRENCY = 'USD'
 CURRENCIES = ('USD', 'UAH')
 CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'UAH')]
+
+

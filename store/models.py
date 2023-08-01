@@ -13,6 +13,7 @@ def create_code():
     code = ''.join([str(random.randint(0, 9)) for i in range(5)])
     return code
 
+
 class Product(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
@@ -26,19 +27,18 @@ class Product(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now_add=True)
 
+
     @property
     def calculate_price(self):
         tier = PriceTier.objects.filter(product=self).order_by('-discount').first()
         if tier:
             return round(self.price.amount * (1 - tier.discount / 100), 2)
-        return self.price
-            
-    def uah_price(self):
-        price_in_uah = convert_money(self.price, 'UAH')
-        return price_in_uah
+        return self.price       
+
 
     def get_url(self):
         return reverse("product_detail", args=[self.category.slug, self.slug])
+
 
     def __str__(self):
         return self.product_name

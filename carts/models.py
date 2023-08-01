@@ -22,7 +22,6 @@ class CartItem(models.Model):
     def get_tiers(self):
         try:
             return PriceTier.objects.filter(product=self.product).order_by('-discount')
-            # return PriceTier.objects.filter(product=self.product, min_quantity__lte=self.quantity)
         except PriceTier.DoesNotExist:
             return None
       
