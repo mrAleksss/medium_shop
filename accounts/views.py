@@ -289,8 +289,9 @@ def order_detail(request, order_id):
     for i in order_detail:
         product = i.product
         cart_item = CartItem.objects.filter(product=product).first()
-        product.price = cart_item.discounted_price
-        total += product.price * i.quantity
+        if cart_item:
+            product.price = cart_item.discounted_price.amount
+            total += product.price * i.quantity
         
 
     context = {
@@ -300,7 +301,6 @@ def order_detail(request, order_id):
     }
 
     return render(request, 'accounts/order_detail.html', context)
-
 
 
 

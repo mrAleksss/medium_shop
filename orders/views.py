@@ -32,11 +32,17 @@ def payments(request):
     for item in cart_items:
         orderproduct = OrderProduct()
         orderproduct.order_id = order.id
+        print(orderproduct.order_id)
         orderproduct.payment = payment
+        print(orderproduct.payment)
         orderproduct.user_id = request.user.id
+        print(orderproduct.user.id)
         orderproduct.product_id = item.product_id
+        print(orderproduct.product_id)
         orderproduct.quantity = item.quantity
-        orderproduct.product_price = item.discounted_price
+        print(orderproduct.quantity)
+        orderproduct.product_price = item.discounted_price.amount
+        print(orderproduct.product_price)
         orderproduct.ordered = True
         orderproduct.save() 
 
@@ -84,7 +90,7 @@ def place_order(request, total=0, quantity=0):
         return redirect("store")
 
     for cart_item in cart_items:
-        total += (cart_item.discounted_price.amount*cart_item.quantity)
+        total += round(cart_item.discounted_price.amount*cart_item.quantity, 2)
         quantity += cart_item.quantity
 
     if request.method == 'POST':
@@ -172,4 +178,3 @@ def order_complete(request):
     
     except (Payment.DoesNotExist, Order.DoesNotExist):
         return redirect('home')
-
