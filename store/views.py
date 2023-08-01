@@ -128,6 +128,14 @@ def contacts(request):
     return render(request, "store/contacts.html")
 
 
+def info(request):
+    return render(request, "store/info.html")
+
+
+def about(request):
+    return render(request, "store/about.html")
+
+
 
 
 
