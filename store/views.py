@@ -136,6 +136,10 @@ def about(request):
     return render(request, "store/about.html")
 
 
+def return_info(request):
+    return render(request, "store/return_info.html")
+
+
 
 
 
