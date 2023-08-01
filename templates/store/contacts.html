@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<body>
+
+
+  <!-- ========================= SECTION CONTENT END// ========================= -->
+<div id="contact-popup" class="popup">
+  <div class="popup-content text-center">
+    <h2>Зв'яжіться з Нами</h2>
+    <p>Velosich company</p>
+    <p>Ватутіна, 16а</p>
+    <p>veloline@gmail.com</p>
+    <p>380680273100</p>
+    <p><a href="https://viber.com">Viber</a></p>
+    <p><a href="https://web.telegram.org">Telegram</a></p>
+
+    <a href="{% url 'store' %}" class="btn btn-dark">Продовжити Shopping</a>
+  </div>
+</div>
+
+
+</body>
+
+
+{% endblock %}

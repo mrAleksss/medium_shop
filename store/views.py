@@ -122,6 +122,10 @@ def submit_review(request, product_id):
                 data.save()
                 messages.success(request, "Дякуємо, ваш відгук було надіслано.")
                 return redirect(url)
+            
+
+def contacts(request):
+    return render(request, "store/contacts.html")
 
 
 
