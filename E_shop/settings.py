@@ -172,3 +172,4 @@ CURRENCIES = ('USD', 'UAH')
 CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'UAH')]
 
 
+

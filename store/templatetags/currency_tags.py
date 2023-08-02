@@ -1,8 +1,6 @@
 from django import template
-from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
-from ..models import Product, PriceTier
-from decimal import Decimal
+from store.util import calculate_discounted_price
 
 
 register = template.Library()
@@ -14,14 +12,20 @@ def convert_to_uah(price_in_usd):
 
 
 @register.filter
-def calculate_discounted_price(product):
-    try:
-        price_tiers = PriceTier.objects.filter(product=product).order_by('-discount')
-        discounted_price = product.price
-        for tier in price_tiers:
-            if quantity >= tier.min_quantity:
-                discounted_price = product.price * (1-tier.discount / Decimal(100))
-        return discounted_price
-    except AttributeError:
-        return product.price
+def discounted_tag(money_obj):
+    return calculate_discounted_price(money_obj)
+# def calculate_discounted_price(money_obj):
+#     products = Product.objects.all()
     
+#     for product in products:
+#         price_tiers = PriceTier.objects.filter(product=product).order_by('-discount').first()
+#         for tier in price_tiers:
+#             if tier:
+#                 discounted_price = money_obj * (1-tier.discount / Decimal(100))
+#                 discounted_price_in_uah = convert_money(discounted_price, 'UAH')
+#                 product.discounted_price_in_uah = discounted_price_in_uah
+     
+            
+            
+        
+#         return product.discounted_price_in_uah

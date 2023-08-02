@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load djmoney %}
+{% load currency_tags %}
 
 {% block content %}
 <!-- ========================= SECTION MAIN ========================= -->
@@ -32,7 +33,7 @@
 			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{product.images.url}}"> </a>
 			<figcaption class="info-wrap">
 				<a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
-				<div class="price mt-1"> {{ product.price }} | {{product.calculated_price}}</div> <!-- price-wrap.// -->
+				<div class="price mt-1"> {{product.price|convert_to_uah}}</div> <!-- price-wrap.// -->
 				<div class="price mt-1"> {{product.uah_price}}</div>
 				<div class="rating-star">
 					<span>
