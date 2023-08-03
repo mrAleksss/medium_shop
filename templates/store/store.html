@@ -134,6 +134,7 @@
   
   <div class="row">
     {% if products %}
+   
       {% for product in products %}
       <div class="col-md-4">
         <figure class="card card-product-grid">
@@ -143,15 +144,25 @@
             
           </div> <!-- img-wrap.// -->
           <figcaption class="info-wrap">
-            <div class="fix-height">
+            <div class="height:200px; fix-height;">
               <a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
+              <a href="{{ product.get_url }}" class="title">{{product.product_code}}</a>
+              
               <div class="price-wrap mt-2">
-                <span class="price"> {{product.price|convert_to_uah}} | {{product.price|discounted_tag}}</span>
+                <span class="price">Original price: {{product.price|convert_to_uah}}</span>
                 <!-- <del class="price-old">$1980</del> -->
               </div> <!-- price-wrap.// -->
+              {% if product.max_discount %}
+                  <p>Max Discount: {{product.max_discount}}%</p>
+                  <p>Discounted_price: {{product.discounted_price_in_uah}}</p>
+                  <p>Min quantity for discount: {{product.min_quantity}}</p>
+              {% else %}
+              <p>no discount</p>
+              {%endif%}
             </div>
-            <a href="{{ product.get_url }}" class="btn btn-block btn-primary">Детальніше </a>
+            
           </figcaption>
+          <a href="{{ product.get_url }}" class="btn btn-block btn-primary">Детальніше </a>
         </figure>
       </div> <!-- col.// -->
       {%endfor%}

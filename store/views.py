@@ -1,7 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, ReviewRating, ProductGallery, PriceTier
 from category.models import Category
-from django.db.models import Q
+from django.db.models import Q, Max, F, Subquery, OuterRef
+from djmoney.money import Money
+from djmoney.contrib.exchange.models import convert_money
+from decimal import Decimal, InvalidOperation
 
 from carts.views import _cart_id
 from carts.models import CartItem
@@ -29,10 +32,21 @@ def store(request, category_slug=None):
         paged_products = paginator.get_page(page)
         products_count = products.count()
     else:
-        products = Product.objects.all().filter(is_available=True).order_by('id')
+        # products = Product.objects.all().filter(is_available=True).order_by('id')
         # get discount price 
+        # for product in products:
+        #     product.calculated_price = product.calculate_price
+        max_discount_subquery = PriceTier.objects.filter(product=OuterRef('pk')).order_by('-discount').values('discount', 'min_quantity')[:1]
+        products = Product.objects.annotate(max_discount=Subquery(max_discount_subquery.values('discount')), min_quantity=Subquery(max_discount_subquery.values('min_quantity'))).annotate(
+            discounted_price=F('price') - (F('price') * F('max_discount') / 100)
+        )
         for product in products:
-            product.calculated_price = product.calculate_price
+            try:
+                discounted_price_usd = Money(Decimal(product.discounted_price), currency='USD')
+                product.discounted_price_in_uah = convert_money(discounted_price_usd, 'UAH')
+            except(InvalidOperation, TypeError):
+                product.discounted_price_in_uah = None
+
 
         paginator = Paginator(products, 6)
         page = request.GET.get('page')
