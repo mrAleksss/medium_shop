@@ -37,7 +37,7 @@ def store(request, category_slug=None):
         # for product in products:
         #     product.calculated_price = product.calculate_price
         max_discount_subquery = PriceTier.objects.filter(product=OuterRef('pk')).order_by('-discount').values('discount', 'min_quantity')[:1]
-        products = Product.objects.annotate(max_discount=Subquery(max_discount_subquery.values('discount')), min_quantity=Subquery(max_discount_subquery.values('min_quantity'))).annotate(
+        products = Product.objects.filter(is_available=True).annotate(max_discount=Subquery(max_discount_subquery.values('discount')), min_quantity=Subquery(max_discount_subquery.values('min_quantity'))).annotate(
             discounted_price=F('price') - (F('price') * F('max_discount') / 100)
         )
         for product in products:

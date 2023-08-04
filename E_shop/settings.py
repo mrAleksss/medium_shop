@@ -168,8 +168,25 @@ OPEN_EXCHANGE_RATES_APP_ID = 'a3f92ade28e748df8874f4d4e6932962'
 
 # Default currency
 DEFAULT_CURRENCY = 'USD'
-CURRENCIES = ('USD', 'UAH')
+# CURRENCIES = ('USD', 'UAH')
 CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'UAH')]
+CURRENCIES = {
+    'USD': ('USD', '$'),
+    'UAH': ('UAH', 'грн'),
+}
+MONEY_CURRENCY_FORMAT = {
+    'UAH': {
+        'symbol': 'грн',
+        'positive': '%s %f',
+        'negative': '-s% %f',
+        'decimal_places': 2,
+        'decimal_sep': '.',
+        'thousand_sep': ',',
+        'positive_sign': '',
+        'negative_sign': '-',
+        'code_before_digits': False,
+    },
+}
 
 
 

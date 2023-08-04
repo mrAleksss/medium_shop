@@ -1,6 +1,6 @@
 from django import template
 from djmoney.contrib.exchange.models import convert_money
-from store.util import calculate_discounted_price
+
 
 
 register = template.Library()

@@ -144,26 +144,29 @@
             
           </div> <!-- img-wrap.// -->
           <figcaption class="info-wrap">
-            <div class="height:200px; fix-height;">
+            <div class="fix-height">
               <a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
-              <a href="{{ product.get_url }}" class="title">{{product.product_code}}</a>
-              
+              <a href="{{ product.get_url }}" class="title">Код:{{product.product_code}}</a>
+              {% if product.max_discount %}
               <div class="price-wrap mt-2">
-                <span class="price">Original price: {{product.price|convert_to_uah}}</span>
+                <span class="price">{{product.price|convert_to_uah}} | {{product.discounted_price_in_uah}}</span>
                 <!-- <del class="price-old">$1980</del> -->
               </div> <!-- price-wrap.// -->
-              {% if product.max_discount %}
-                  <p>Max Discount: {{product.max_discount}}%</p>
-                  <p>Discounted_price: {{product.discounted_price_in_uah}}</p>
-                  <p>Min quantity for discount: {{product.min_quantity}}</p>
+                  <p>Max знижка: {{product.max_discount}}%</p>
+                  <p>Кількість для знижки: {{product.min_quantity}}</p>
               {% else %}
-              <p>no discount</p>
+              <div class="price-wrap mt-2">
+                <span class="price">{{product.price|convert_to_uah}}</span>
+                <!-- <del class="price-old">$1980</del> -->
+              </div> 
+              <p>Очікуйте на знижки</p>
               {%endif%}
             </div>
             
           </figcaption>
           <a href="{{ product.get_url }}" class="btn btn-block btn-primary">Детальніше </a>
         </figure>
+        
       </div> <!-- col.// -->
       {%endfor%}
     {% else %}

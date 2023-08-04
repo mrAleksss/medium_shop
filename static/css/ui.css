@@ -887,7 +887,7 @@ a[class*=card]:hover .title {
   color: #3167eb;
 }
 .card-product-grid .fix-height {
-  height: 80px;
+  height: 120px;
   overflow: hidden;
 }
 .card-product-grid .btn-overlay {
