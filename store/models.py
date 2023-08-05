@@ -9,6 +9,10 @@ from djmoney.models.fields import MoneyField
 from djmoney.contrib.exchange.models import convert_money
 
 
+class Rate_to_uah(models.Model):
+    usd_to_uah_rate = models.DecimalField(max_digits=10, decimal_places=2)
+
+
 def create_code():
     code = ''.join([str(random.randint(0, 9)) for i in range(5)])
     return code
@@ -20,20 +24,13 @@ class Product(models.Model):
     description = models.TextField(max_length=500, blank=True)
     product_code = models.CharField(max_length=5, unique=True, blank=True)
     price = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+    price_in_uah = MoneyField(max_digits=14, decimal_places=2, default_currency='UAH', blank=True, null=True)
     images = models.ImageField(upload_to="photos/products")
     stock = models.IntegerField()
     is_available = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now_add=True)
-
-
-    @property
-    def calculate_price(self):
-        tier = PriceTier.objects.filter(product=self).order_by('-discount').first()
-        if tier:
-            return round(self.price.amount * (1 - tier.discount / 100), 2)
-        return self.price       
+    modified_date = models.DateTimeField(auto_now_add=True)     
 
 
     def get_url(self):

@@ -79,7 +79,33 @@ footer {
   flex-shrink: 0;
 }
 
+.slider-container {
+  position:relative;
+  display: flex;
+  align-items: center;
+}
 
+.floating-slider {
+  width: 100%;
+  margin: 0 10px;
+}
+
+.slider-value {
+  width: 40px;
+  text-align: center;
+}
+
+.minus-button,
+.plus-button {
+  width: 30px;
+  height: 30px;
+  background-color: #ccc;
+  border: 1px solid #aaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
 
 
 

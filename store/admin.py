@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Variation, ReviewRating, ProductGallery, PriceTier
+from .models import Product, Variation, ReviewRating, ProductGallery, PriceTier, Rate_to_uah
 import admin_thumbnails
 
 
@@ -10,7 +10,7 @@ class ProductGalleryInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_name', 'price', 'stock', 'category', 'modified_date', 'is_available')
+    list_display = ('product_name', 'price', 'price_in_uah', 'stock', 'category', 'modified_date', 'is_available')
     prepopulated_fields = {"slug": ("product_name", )}
     inlines = [ProductGalleryInline]
 
@@ -27,4 +27,5 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Variation, VariationAdmin)
 admin.site.register(ReviewRating)
 admin.site.register(ProductGallery)
+admin.site.register(Rate_to_uah)
 admin.site.register(PriceTier, PriceTierAdmin)

@@ -127,7 +127,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_TZ = True
 
@@ -168,25 +168,15 @@ OPEN_EXCHANGE_RATES_APP_ID = 'a3f92ade28e748df8874f4d4e6932962'
 
 # Default currency
 DEFAULT_CURRENCY = 'USD'
-# CURRENCIES = ('USD', 'UAH')
-CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'UAH')]
+
+CURRENCY_CHOICES = [('USD', 'USD $'), ('UAH', 'грн')]
 CURRENCIES = {
-    'USD': ('USD', '$'),
-    'UAH': ('UAH', 'грн'),
+    'UAH': ('грн', 'Ukrainian Hryvnia'),
+    'USD': ('$', 'US Dollar'),
+    
 }
-MONEY_CURRENCY_FORMAT = {
-    'UAH': {
-        'symbol': 'грн',
-        'positive': '%s %f',
-        'negative': '-s% %f',
-        'decimal_places': 2,
-        'decimal_sep': '.',
-        'thousand_sep': ',',
-        'positive_sign': '',
-        'negative_sign': '-',
-        'code_before_digits': False,
-    },
-}
+CURRENCY_SYMBOL = 'грн'
+
 
 
 

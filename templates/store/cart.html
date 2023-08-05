@@ -59,14 +59,25 @@
                 <div class="input-group-append">
                   <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
                     {% csrf_token %}
+                    
                     {% for item in cart_item.variations.all %}
                     <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst}}">
                     
                     {% endfor %}
+                    <!-- new addition to cart -->
                     <button class="btn btn-light" type="submit" id="button-minus"> <i class="fa fa-plus"></i> </button>
+                    
                   </form>
+                  
+                  
                 </div>
               </div> <!-- input-group.// -->
+              <div class="slider-container">
+                <div class="minus-button">-</div>
+                <input type="range" class="floating-slider" min="0" max="100" step="1" value="0">
+                <span class="slider-value">0</span>
+                <div class="plus-button">+</div>
+              </div>
             </div> <!-- col.// -->
     </td>
     <td> 
@@ -113,6 +124,33 @@
   </div> <!-- container .//  -->
   </section>
   <!-- ========================= SECTION CONTENT END// ========================= -->
+<script>
+  const slider = document.querySelector('.floating-slider');
+  const sliderValue = document.querySelector('.slider-value');
+  const minusButton = document.querySelector('.minus-button');
+  const plusButton = document.querySelector('.plus-button');
 
+  const updateSliderValue = () => {
+    sliderValue.textContent = slider.value;
+  };
+
+  slider.addEventListener('input', () => {
+    updateSliderValue();
+  })
+
+  minusButton.addEventListener('click', () => {
+    if (slider.value > 0) {
+      slider.value = parseInt(slider.value) - 1;
+      updateSliderValue();
+    }
+  });
+
+  plusButton.addEventListener('click', () => {
+    if (slider.value < 100) {
+      slider.value = parseInt(slider.value) + 1;
+      updateSliderValue();
+    }
+  });
+</script>
 
 {% endblock %}
