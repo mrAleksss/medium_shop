@@ -1,6 +1,9 @@
 from django.db import models
+from django.db.models import Max
 from store.models import Product, Variation, PriceTier
 from accounts.models import Account
+
+from decimal import Decimal, ROUND_UP, ROUND_DOWN
 
 
 class Cart(models.Model):
@@ -20,29 +23,24 @@ class CartItem(models.Model):
     is_active = models.BooleanField(default=True)
 
     def get_tiers(self):
-        try:
-            return PriceTier.objects.filter(product=self.product).order_by('-discount')
-        except PriceTier.DoesNotExist:
-            return None
-      
+        return self.product.tier.filter(min_quantity__lte=self.quantity)
+    
     @property
     def discounted_price(self):
         tiers = self.get_tiers()
         if tiers:
-            for tier in tiers:
-                # new line
-                if self.quantity >= tier.min_quantity:
-                    return self.product.price * (1 - tier.discount/100)
-            else:
-                return self.product.price
-        return self.product.price
-
-
-    def base_total(self):
-        return self.product.price * self.quantity
+            max_discount = tiers.aggregate(Max('discount'))['discount__max']
+            if max_discount is not None:
+                max_discount_tier = tiers.get(discount=max_discount)
+                if self.quantity >= max_discount_tier.min_quantity:
+                    discounted_price = self.product.price_in_uah.amount * (1 - max_discount / 100)
+                    return discounted_price.quantize(Decimal('0.00'), rounding=ROUND_UP)
+        return self.product.price_in_uah.amount.quantize(Decimal('0.00'), rounding=ROUND_UP)
     
+    @property
     def discounted_total(self):
         return self.discounted_price * self.quantity
+
 
     def __unicode__(self):
         return self.product
