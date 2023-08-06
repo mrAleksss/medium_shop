@@ -4,8 +4,8 @@ from accounts.models import Account
 from store.models import Product, Variation
 
 
+
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=14, decimal_places=2)
     payment_date = models.DateField(auto_now_add=True)
@@ -45,7 +45,7 @@ class Order(models.Model):
 
 
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    payment = models.ManyToManyField(Payment)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
