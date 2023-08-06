@@ -7,7 +7,7 @@ import json
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 
 
 def payments(request):
@@ -90,7 +90,7 @@ def place_order(request, total=0, quantity=0):
         return redirect("store")
 
     for cart_item in cart_items:
-        total += round(cart_item.discounted_price.amount*cart_item.quantity, 2)
+        total += cart_item.discounted_price*cart_item.quantity
         quantity += cart_item.quantity
 
     if request.method == 'POST':
@@ -134,18 +134,7 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'store/checkout.html', context)
 
     else:
-        context = {}
-        initial_dict = {
-            'first_name': 'A',
-            'last_name': 'B',
-            'phone': 'C',
-            'email': 'fox@google.com',
-            'address_line_1': 'E',
-            'address_line_2': 'F',
-            'state': 'G',
-            'city': "K",
-        }
-        form = OrderForm(request.POST or None, initial=initial_dict)
+        form = OrderForm(request.POST or None)
         context['form'] = form
 
         return render(request, 'store/checkout.html', context)
