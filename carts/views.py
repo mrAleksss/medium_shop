@@ -205,9 +205,10 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         
     except ObjectDoesNotExist:
         pass
-    
-    order = Order.objects.filter(user=request.user).last()
-    form = OrderForm(instance=order)
+
+    # order = Order.objects.filter(user=request.user).last()
+    form = OrderForm(request.POST)
+
     
     context = {
         "total": total,

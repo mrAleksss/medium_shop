@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 import datetime
 from carts.models import CartItem
-from .forms import OrderForm
+from .forms import OrderForm, PaymentForm
 from .models import Order, Payment, OrderProduct
 import json
 from store.models import Product
@@ -32,17 +32,11 @@ def payments(request):
     for item in cart_items:
         orderproduct = OrderProduct()
         orderproduct.order_id = order.id
-        print(orderproduct.order_id)
         orderproduct.payment = payment
-        print(orderproduct.payment)
         orderproduct.user_id = request.user.id
-        print(orderproduct.user.id)
         orderproduct.product_id = item.product_id
-        print(orderproduct.product_id)
         orderproduct.quantity = item.quantity
-        print(orderproduct.quantity)
         orderproduct.product_price = item.discounted_price.amount
-        print(orderproduct.product_price)
         orderproduct.ordered = True
         orderproduct.save() 
 
@@ -94,18 +88,23 @@ def place_order(request, total=0, quantity=0):
         quantity += cart_item.quantity
 
     if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
+        order_form = OrderForm(request.POST)
+        payment_form = PaymentForm(request.POST)
+        if order_form.is_valid() and payment_form.is_valid():
+            # add payment method
+            pay_data = Payment()
+            pay_data.payment_method = payment_form.cleaned_data['payment_method']
+            payment = Payment.objects.create(payment_method=pay_data.payment_method)
             # Store all billing information inside the Order table
             data = Order()
+            data.payment = payment
             data.user = current_user
             data.first_name = form.cleaned_data['first_name']
             data.last_name = form.cleaned_data['last_name']
             data.phone = form.cleaned_data['phone']
-            data.email = form.cleaned_data['email']
-            data.address_line_1 = form.cleaned_data['address_line_1']
-            data.address_line_2 = form.cleaned_data['address_line_2']
-            data.state = form.cleaned_data['state']
+            data.email = current_user.email
+            data.delivery_address = form.cleaned_data['delivery_address']
+            data.delivery_method = form.cleaned_data['delivery_method']
             data.city = form.cleaned_data['city']
             data.order_note = form.cleaned_data['order_note']
             data.order_total = total
@@ -134,8 +133,13 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'store/checkout.html', context)
 
     else:
+        
         form = OrderForm(request.POST or None)
-        context['form'] = form
+        pay_form = PaymentForm(request.POST or None)
+        context = {
+            'form': form,
+            'pay_form': pay_form,
+        }
 
         return render(request, 'store/checkout.html', context)
     

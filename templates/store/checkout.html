@@ -29,11 +29,6 @@
           </div>
         </div>
           <div class="form-row">
-
-            <div class="col form-group">
-              <label for="">Email</label>
-              <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" required>
-            </div>
             <div class="col form-group">
               <label for="">Телефон</label>
               <input type="text" name="phone" class="form-control" value="{{ form.phone.value|default:'' }}" required>
@@ -41,23 +36,22 @@
           </div>
           <div class="form-row">
             <div class="col form-group">
-              <label for="">Адреса 1</label>
-              <input type="text" name="address_line_1" class="form-control" value="{{ form.address_line_1.value|default:'' }}" required>
+              <label for="{{ form.delivery_method.id_for_label }}">Спосіб Доставки: </label>
+              {{ form.delivery_method }}
             </div>
             <div class="col form-group">
-              <label for="">Адреса 2</label>
-              <input type="text" name="address_line_2" class="form-control">
+              <label for="{{ pay_form.payment_method.id_for_label }}">Спосіб Оплати</label>
+              {{ pay_form.payment_method }}
             </div>
           </div>
           <div class="form-row">
-
             <div class="col form-group">
               <label for="">Місто</label>
               <input type="text" name="city" class="form-control" value="{{ form.city.value|default:'' }}" required>
             </div>
             <div class="col form-group">
-              <label for="">Область</label>
-              <input type="text" name="state" class="form-control" value="{{ form.state.value|default:'' }}" required>
+              <label for="">Адреса доставки</label>
+              <input type="text" name="delivery_address" class="form-control" value="{{ form.delivery_address.value|default:'' }}" required>
             </div>
           </div>
           <div class="form-row">
@@ -133,6 +127,15 @@
   </div> <!-- container .//  -->
   </section>
   <!-- ========================= SECTION CONTENT END// ========================= -->
+<script>
+  const deliveryMethodSelect = document.querySelector('#id_delivery_method');
+  const deliveryMethodInfoDiv = document.querySelector('.col.form-group #delivery-method-info');
 
+  deliveryMethodSelect.addEventListener('change', function () {
+    const selectedValue = this.value;
+    const selectedText = thos.options[this.selectedIndex].text;
+    deliveryMethodInfoDiv.textContent = `Selected delivery method: ${selectedText} (${selectedValue})`;
+  });
+</script>
 
 {% endblock %}

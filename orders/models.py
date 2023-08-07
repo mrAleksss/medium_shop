@@ -7,14 +7,16 @@ from store.models import Product, Variation
 
 class Payment(models.Model):
     amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
-    total_amount = models.DecimalField(max_digits=14, decimal_places=2)
     payment_date = models.DateField(auto_now_add=True)
-    payment_method = models.CharField(max_length=100)
+    payment_method = models.CharField(max_length=100, choices=[
+        ('Оплата на карту', 'Оплата на карту'), 
+        ('Наложенний платіж', 'Наложенний платіж'), 
+        ('Готівкою при отриманні', 'Готівкою при отриманні'),], default='Готівкою при отриманні')
     payment_status = models.CharField(max_length=50, choices=[
-        ('Pending', 'Pending'),
-        ('Paid', 'Paid'),
-        ('Partial', 'Partial')
-    ], default='Pending')
+        ('В очікуванні', 'В очікуванні'),
+        ('Оплочено', 'Оплочено'),
+        ('Часткова оплата', 'Часткова оплата')
+    ], default='В очікуванні')
 
     def __str__(self):
         return f"{self.order} - {self.amount_paid} - {self.payment_status}"
@@ -51,10 +53,12 @@ class Order(models.Model):
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
     email = models.EmailField(max_length=50)
-    address_line_1 = models.CharField(max_length=100)
-    address_line_2 = models.CharField(max_length=100, blank=True)
-    state = models.CharField(max_length=50)
+    delivery_method = models.CharField(max_length=100, choices=[
+        ('Самовивіз', 'Самовивіз'), 
+        ('Нова Пошта', 'Нова Пошта'), 
+        ('Адресна доставка', 'Адресна доставка')], default='Нова пошта')
     city = models.CharField(max_length=50)
+    delivery_address = models.CharField(max_length=100)
     order_note = models.CharField(max_length=500, blank=True)
     order_total = models.DecimalField(max_digits=14, decimal_places=2)
     amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
