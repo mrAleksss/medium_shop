@@ -4,39 +4,6 @@ from accounts.models import Account
 from store.models import Product, Variation
 
 
-
-class Payment(models.Model):
-    amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
-    payment_date = models.DateField(auto_now_add=True)
-    payment_method = models.CharField(max_length=100, choices=[
-        ('Оплата на карту', 'Оплата на карту'), 
-        ('Наложенний платіж', 'Наложенний платіж'), 
-        ('Готівкою при отриманні', 'Готівкою при отриманні'),], default='Готівкою при отриманні')
-    payment_status = models.CharField(max_length=50, choices=[
-        ('В очікуванні', 'В очікуванні'),
-        ('Оплочено', 'Оплочено'),
-        ('Часткова оплата', 'Часткова оплата')
-    ], default='В очікуванні')
-
-    def __str__(self):
-        return f"{self.order} - {self.amount_paid} - {self.payment_status}"
-    
-    def update_amount_paid(self):
-        payments_total = Payment.objects.filter(order=self.order).exclude(payment_status='Pending').aggregate(total=Sum('amount_paid'))
-        total_paid = payments_total['total'] or 0
-        self.order.amount_paid = total_paid
-        self.order.save()
-        self.order.update_remaining_balance()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.order.amount_paid += self.amount_paid
-            self.order.save()
-            self.update_amount_paid()
-        super().save(*args, **kwargs)
-
-    
-
 class Order(models.Model):
     STATUS = (
         ('New', 'New'),
@@ -44,10 +11,7 @@ class Order(models.Model):
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     )
-
-
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
-    payment = models.ManyToManyField(Payment)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -81,6 +45,38 @@ class Order(models.Model):
     
     def __str__(self):
         return self.user.first_name
+    
+
+class Payment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    payment_date = models.DateField(auto_now_add=True)
+    payment_method = models.CharField(max_length=100, choices=[
+        ('Оплата на карту', 'Оплата на карту'), 
+        ('Наложенний платіж', 'Наложенний платіж'), 
+        ('Готівкою при отриманні', 'Готівкою при отриманні'),], default='Готівкою при отриманні')
+    payment_status = models.CharField(max_length=50, choices=[
+        ('В очікуванні', 'В очікуванні'),
+        ('Оплочено', 'Оплочено'),
+        ('Часткова оплата', 'Часткова оплата')
+    ], default='В очікуванні')
+
+    def __str__(self):
+        return f"{self.payment_date} - {self.amount_paid} - {self.payment_status}"
+    
+    def update_amount_paid(self):
+        payments_total = Payment.objects.filter(order=self.order).exclude(payment_status='Pending').aggregate(total=Sum('amount_paid'))
+        total_paid = payments_total['total'] or 0
+        self.order.amount_paid = total_paid
+        self.order.save()
+        self.order.update_remaining_balance()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.order.amount_paid += self.amount_paid
+            self.order.save()
+            self.update_amount_paid()
+        super().save(*args, **kwargs)
     
 
 class OrderProduct(models.Model):

@@ -88,25 +88,19 @@ def place_order(request, total=0, quantity=0):
         quantity += cart_item.quantity
 
     if request.method == 'POST':
-        order_form = OrderForm(request.POST)
-        payment_form = PaymentForm(request.POST)
-        if order_form.is_valid() and payment_form.is_valid():
-            # add payment method
-            pay_data = Payment()
-            pay_data.payment_method = payment_form.cleaned_data['payment_method']
-            payment = Payment.objects.create(payment_method=pay_data.payment_method)
+        form = OrderForm(request.POST, prefix='order')
+        payment_form = PaymentForm(request.POST, prefix='payment')
+        if form.is_valid() and payment_form.is_valid():
+            # Create Payment instance
+            payment_method = payment_form.cleaned_data['payment_method']
+            payment = Payment(payment_method=payment_method)
+            # save the payment instance to get id
+            payment.save()
             # Store all billing information inside the Order table
-            data = Order()
-            data.payment = payment
-            data.user = current_user
-            data.first_name = form.cleaned_data['first_name']
-            data.last_name = form.cleaned_data['last_name']
-            data.phone = form.cleaned_data['phone']
+            # new option
+            data = form.save(commit=False)
             data.email = current_user.email
-            data.delivery_address = form.cleaned_data['delivery_address']
-            data.delivery_method = form.cleaned_data['delivery_method']
-            data.city = form.cleaned_data['city']
-            data.order_note = form.cleaned_data['order_note']
+            data.user = current_user
             data.order_total = total
             data.ip = request.META.get('REMOTE_ADDR')
             data.save()
@@ -118,6 +112,8 @@ def place_order(request, total=0, quantity=0):
             current_date = d.strftime("%Y%m%d")
             order_number = current_date + str(data.id)
             data.order_number = order_number
+            # Associate the payment with order
+            data.payment = payment
             data.save()
 
             order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
@@ -129,16 +125,18 @@ def place_order(request, total=0, quantity=0):
             return render(request, "orders/payments.html", context)
         
         else:
+            print(form.errors)
+            print(payment_form.errors)
             context = {'form': OrderForm(request.POST)}
             return render(request, 'store/checkout.html', context)
 
     else:
         
         form = OrderForm(request.POST or None)
-        pay_form = PaymentForm(request.POST or None)
+        payment_form = PaymentForm(request.POST or None)
         context = {
             'form': form,
-            'pay_form': pay_form,
+            'payment_form': payment_form,
         }
 
         return render(request, 'store/checkout.html', context)

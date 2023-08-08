@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import decimal
 
 # test import
-from orders.forms import OrderForm
+from orders.forms import OrderForm, PaymentForm
 from orders.models import Order
 
 
@@ -206,15 +206,19 @@ def checkout(request, total=0, quantity=0, cart_items=None):
     except ObjectDoesNotExist:
         pass
 
-    # order = Order.objects.filter(user=request.user).last()
-    form = OrderForm(request.POST)
-
-    
+    order = Order.objects.filter(user=request.user).last()
+    if order:
+        form = OrderForm(instance=order)
+        payment_form = PaymentForm()
+    else:
+        payment_form = PaymentForm()
+        form = OrderForm()
     context = {
         "total": total,
         "quantity": quantity, 
         "cart_items": cart_items,
         'form': form,
+        'payment_form': payment_form,
     }
     return render(request, 'store/checkout.html', context)
 
