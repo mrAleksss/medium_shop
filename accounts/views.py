@@ -285,19 +285,15 @@ def change_password(request):
 def order_detail(request, order_id):
     order_detail = OrderProduct.objects.filter(order__order_number=order_id)
     order = Order.objects.get(order_number=order_id)
-    total = 0
-    for i in order_detail:
-        product = i.product
-        cart_item = CartItem.objects.filter(product=product).first()
-        if cart_item:
-            product.price = cart_item.discounted_price.amount
-            total += product.price * i.quantity
-        
+    print(order_detail)
+    
+    for item in order_detail:
+        item.subtotal = item.product_price * item.quantity
+
 
     context = {
         'order_detail': order_detail,
         'order': order,
-        'total': total,
     }
 
     return render(request, 'accounts/order_detail.html', context)

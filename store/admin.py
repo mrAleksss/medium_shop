@@ -9,10 +9,14 @@ class ProductGalleryInline(admin.TabularInline):
     extra = 1
 
 
+class PriceTierInline(admin.TabularInline):
+    model = PriceTier
+
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name', 'price', 'price_in_uah', 'stock', 'category', 'modified_date', 'is_available')
     prepopulated_fields = {"slug": ("product_name", )}
-    inlines = [ProductGalleryInline]
+    inlines = [PriceTierInline, ProductGalleryInline]
 
 class VariationAdmin(admin.ModelAdmin):
     list_display = ('product', 'variation_category', 'variation_value', 'is_active',)
