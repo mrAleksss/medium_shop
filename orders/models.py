@@ -41,10 +41,10 @@ class Order(models.Model):
         return f"{self.first_name} {self.last_name}"
     
     def full_address(self):
-        return f"{self.address_line_1} {self.address_line_2}"
+        return f"{self.city} - {self.delivery_method} - {self.delivery_address}"
     
     def __str__(self):
-        return self.user.first_name
+        return self.order_number
     
 
 class Payment(models.Model):
@@ -64,19 +64,19 @@ class Payment(models.Model):
     def __str__(self):
         return f"{self.payment_date} - {self.amount_paid} - {self.payment_status}"
     
-    def update_amount_paid(self):
-        payments_total = Payment.objects.filter(order=self.order).exclude(payment_status='Pending').aggregate(total=Sum('amount_paid'))
-        total_paid = payments_total['total'] or 0
-        self.order.amount_paid = total_paid
-        self.order.save()
-        self.order.update_remaining_balance()
+    # def update_amount_paid(self):
+    #     payments_total = Payment.objects.filter(order=self.order).exclude(payment_status='Pending').aggregate(total=Sum('amount_paid'))
+    #     total_paid = payments_total['total'] or 0
+    #     self.order.amount_paid = total_paid
+    #     self.order.save()
+    #     self.order.update_remaining_balance()
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.order.amount_paid += self.amount_paid
-            self.order.save()
-            self.update_amount_paid()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         self.order.amount_paid += self.amount_paid
+    #         self.order.save()
+    #         self.update_amount_paid()
+    #     super().save(*args, **kwargs)
     
 
 class OrderProduct(models.Model):

@@ -217,7 +217,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         "total": total,
         "quantity": quantity, 
         "cart_items": cart_items,
-        'form': form,
+        'order_form': form,
         'payment_form': payment_form,
     }
     return render(request, 'store/checkout.html', context)
