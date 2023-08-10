@@ -1,0 +1,11 @@
+{% extends 'base_pdf.html' %}
+
+{% block title %}
+  Invoice
+{% endblock %}
+
+{% block content %}
+{{ order.order_number }}
+<button>pdf</button>
+<br>
+{% endblock %}

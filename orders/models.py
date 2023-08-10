@@ -33,9 +33,18 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        # Check if any payments have been made for this order
+        if not self.payment_set.exists() and self.amount_paid == 0:
+            self.remaining_balance = self.order_total
+        super().save(*args, **kwargs)
+
+
     def update_remaining_balance(self):
-        self.remaining_balance = self.order_total - self.amount_paid
-        self.save()
+        payments = self.payment_set.all()
+        total_paid = sum(payment.amount_paid for payment in payments)
+        self.remaining_balance = self.order_total - total_paid
+        self.save(update_fields=['remaining_balance'])
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -64,19 +73,9 @@ class Payment(models.Model):
     def __str__(self):
         return f"{self.payment_date} - {self.amount_paid} - {self.payment_status}"
     
-    # def update_amount_paid(self):
-    #     payments_total = Payment.objects.filter(order=self.order).exclude(payment_status='Pending').aggregate(total=Sum('amount_paid'))
-    #     total_paid = payments_total['total'] or 0
-    #     self.order.amount_paid = total_paid
-    #     self.order.save()
-    #     self.order.update_remaining_balance()
-
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         self.order.amount_paid += self.amount_paid
-    #         self.order.save()
-    #         self.update_amount_paid()
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        super(Payment, self).save(*args, **kwargs)
+        self.order.update_remaining_balance()
     
 
 class OrderProduct(models.Model):

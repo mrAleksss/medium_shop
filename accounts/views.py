@@ -18,7 +18,6 @@ import requests
 from orders.models import Order, OrderProduct
 
 
-
 def register(request):
     if request.method == 'POST': 
         form = RegistrationForm(request.POST)
@@ -297,6 +296,9 @@ def order_detail(request, order_id):
     }
 
     return render(request, 'accounts/order_detail.html', context)
+
+
+
 
 
 

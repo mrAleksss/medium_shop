@@ -24,14 +24,8 @@ def store(request, category_slug=None):
         # products = Product.objects.filter(category=category, is_available=True)
         max_discount_subquery = PriceTier.objects.filter(product=OuterRef('pk')).order_by('-discount').values('discount', 'min_quantity')[:1]
         products = Product.objects.filter(category=category, is_available=True).annotate(max_discount=Subquery(max_discount_subquery.values('discount')), min_quantity=Subquery(max_discount_subquery.values('min_quantity'))).annotate(
-            discounted_price=F('price') - (F('price') * F('max_discount') / 100)
+            discounted_price=F('price_in_uah') - (F('price_in_uah') * F('max_discount') / 100)
         )
-        for product in products:
-            try:
-                discounted_price_usd = Money(Decimal(product.discounted_price), currency='USD')
-                product.discounted_price_in_uah = convert_money(discounted_price_usd, 'UAH')
-            except(InvalidOperation, TypeError):
-                product.discounted_price_in_uah = None
 
         paginator = Paginator(products, 6)
         page = request.GET.get('page')

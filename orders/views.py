@@ -3,11 +3,10 @@ import datetime
 from carts.models import CartItem
 from .forms import OrderForm, PaymentForm
 from .models import Order, Payment, OrderProduct
-import json
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.http import JsonResponse
+
 
 
 def place_order(request, total=0, quantity=0):
@@ -143,29 +142,17 @@ def place_order(request, total=0, quantity=0):
         return render(request, 'store/checkout.html', context)
     
 
-# def order_complete(request):
-#     order_number = request.GET.get('order_number')
-#     transID = request.GET.get('payment_id')
-
-#     try:
-#         order = Order.objects.get(order_number=order_number, is_ordered=True)
-#         ordered_products = OrderProduct.objects.filter(order_id=order.id)
-
-#         total = 0
-#         for i in ordered_products:
-#             total += i.product_price * i.quantity
-
-#         payment = Payment.objects.get(payment_id=transID)
-
-#         context = {
-#             "order": order,
-#             "ordered_products": ordered_products,
-#             "order_number": order.order_number,
-#             "payment": payment,
-#             "total": total,
-#         }
-
-#         return render(request, 'orders/order_complete.html', context)
+def payments(request):
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    user_payments = Payment.objects.filter(order__in=user_orders).order_by('-payment_date')
     
-#     except (Payment.DoesNotExist, Order.DoesNotExist):
-#         return redirect('home')
+    context = {
+        'user_payments': user_payments,
+        'user_orders': user_orders,
+    }
+    print(user_orders)
+    print(user_payments)
+    return render(request, 'orders/payments.html', context)
+    
+
+
