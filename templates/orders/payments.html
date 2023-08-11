@@ -20,41 +20,22 @@
             <thead>
               <tr>
                 <th scope="col">Номер Замовлення</th>
-                <th scope="col">Дата Оплати</th>
-                <th scope="col">Метод оплати</th>
-                <th scope="col">Сума оплати</th>
                 <th scope="col">Залишок</th>
+                <th scope="col">Сума оплати</th>
+                <th scope="col">date</th>
               </tr>
             </thead>
             <tbody>
-              {% for order in user_orders %}
-              
+              {% for order_entry in order_data %}
+                {% for payment_entry in order_entry.payment_data %}
               <tr>
-                <th scope="row"><a href="#">{{ order.order_number }}</a></th>
-                <td>{{ order.remaining_balance }}</td>
-                <td>
-                    {% for payment in user_payments %}
-                        {% if payment.order == order %}
-                            {{ payment.payment_date }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for payment in user_payments %}
-                        {% if payment.order == order %}
-                            {{ payment.payment_method }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for payment in user_payments %}
-                        {% if payment.order == order and payment.amount_paid > 0 %}
-                            {{ payment.amount_paid }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
+                <th scope="row"><a href="{% url 'order_detail' order_id=order_entry.order.order_number %}">{{ order_entry.order.order_number }}</a></th>
+                <td>{{payment_entry.remaining_balance}}</td>
+                <td>{{ payment_entry.payment.amount_paid }}</td>
+                <td>{{payment_entry.payment.payment_date}}</td>
+                
               </tr>
-              
+                {% endfor %}
               {% endfor %}
             </tbody>
           </table>
