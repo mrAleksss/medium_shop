@@ -78,8 +78,8 @@ body {
 footer {
   flex-shrink: 0;
 } */
-
-.slider-container {
+/* css for javascript floating buttons for cart */
+/* .slider-container {
   position:relative;
   display: flex;
   align-items: center;
@@ -105,8 +105,10 @@ footer {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-}
-
+} */
+/* .checkmark {
+  font-size: 24px;
+} */
 
 
 

@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 
 
 def place_order(request, total=0, quantity=0):
+    # take current user that are registered in system
     current_user = request.user
     # if cart_count is less or equal to 0 then redirect to shop 
     cart_items = CartItem.objects.filter(user=current_user)
@@ -18,38 +19,30 @@ def place_order(request, total=0, quantity=0):
         return redirect("store")
 
     for cart_item in cart_items:
+        # Count total price by discounted method in CartItem and also count quantity
         total += cart_item.discounted_price*cart_item.quantity
         quantity += cart_item.quantity
-    print(total)
-    print(quantity)
+
 
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
         if order_form.is_valid():
-            # Store all billing information inside the Order table
+            # Create instance of Order and record all neccessary information before saving
             data = Order()
             data.user = current_user
-            print(data.user)
             data.first_name = order_form.cleaned_data['first_name']
-            print(data.first_name)
             data.last_name = order_form.cleaned_data['last_name']
-            print(data.last_name)
             data.phone = order_form.cleaned_data['phone']
-            print(data.phone)
             data.email = current_user.email
-            print(data.email)
             data.payment_method = order_form.cleaned_data['payment_method']
             data.delivery_method = order_form.cleaned_data['delivery_method']
             data.delivery_address = order_form.cleaned_data['delivery_address']
-            print(data.delivery_address)
             data.city = order_form.cleaned_data['city']
-            print(data.city)
             data.order_note = order_form.cleaned_data['order_note']
             data.ip = request.META.get('REMOTE_ADDR')
-            print(data.ip)
             data.order_total = total
             data.save()
-            # Generate order number
+            # Generate order number based on order.id that was generating after data.save()
             yr = int(datetime.date.today().strftime('%Y'))
             dt = int(datetime.date.today().strftime('%d'))
             mt = int(datetime.date.today().strftime('%m'))
@@ -57,15 +50,10 @@ def place_order(request, total=0, quantity=0):
             current_date = d.strftime("%Y%m%d")
             order_number = current_date + str(data.id)
             data.order_number = order_number
-            print(data.order_number)
             data.save()
-            
 
             order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
-            order.is_ordered = True
-            order.save()
-
-
+            
             # Move the cart items to OrderProduct table
             cart_items = CartItem.objects.filter(user=request.user)
 
@@ -76,7 +64,7 @@ def place_order(request, total=0, quantity=0):
                 orderproduct.product_id = item.product_id
                 orderproduct.quantity = item.quantity
                 orderproduct.product_price = item.discounted_price
-                # orderproduct.ordered = True
+                orderproduct.ordered = True
                 orderproduct.save() 
 
                 cart_item = CartItem.objects.get(id=item.id)
@@ -116,11 +104,7 @@ def place_order(request, total=0, quantity=0):
 
 
         else:
-            print(order_form.errors)
-            context = {
-                'order_form': OrderForm(request.POST),
-                }
-            return render(request, 'store/checkout.html', context)
+            return render(request, 'store/checkout.html', {'order_form': order_form})
 
     else:
         
@@ -138,12 +122,16 @@ def payments(request):
     order_data = []
 
     for order in user_orders:
-        payments = Payment.objects.filter(order=order, amount_paid__gt=0).order_by('payment_date')
+        # Retrieve all payments greater then 0 from all users orders 
+        payments = Payment.objects.filter(order=order, amount_paid__gt=0).order_by('-payment_date')
         remaining_balance = order.order_total
+        # Create list for appending data with payment instance and remaining_balance
         payment_data = []
 
         for payment in payments:
+            # Asign new value for variable remaining_balance according its equal -amount_paid for every payment instance
             remaining_balance -= payment.amount_paid
+            # append newly creating data about balance with payment
             payment_data.append({
                 'payment': payment,
                 'remaining_balance': remaining_balance,

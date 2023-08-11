@@ -20,10 +20,11 @@
             <thead>
               <tr>
                 <th scope="col">Замовлення #</th>
-                <th scope="col">Платіжна адреса</th>
+                <th scope="col">Контактна особа</th>
                 <th scope="col">Телефон</th>
                 <th scope="col">Сума в Замовленні</th>
                 <th scope="col">Дата</th>
+                <th scope="col">Статус</th>
               </tr>
             </thead>
             <tbody>
@@ -34,6 +35,12 @@
                 <td>{{ order.phone }}</td>
                 <td>{{ order.order_total }}</td>
                 <td>{{ order.created_at }}</td>
+                <td>
+                  {% if order.is_ordered == True %}
+                  <span class="checkmark" style="color: green;">&#10004 Завершено</span>
+                  {% else %}До сплати: <span style="font-weight: bold; color: red;">{{order.remaining_balance}}</span>
+                  {% endif %}
+                  </td>
               </tr>
               {% endfor %}
             </tbody>

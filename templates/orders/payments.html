@@ -22,7 +22,8 @@
                 <th scope="col">Номер Замовлення</th>
                 <th scope="col">Залишок</th>
                 <th scope="col">Сума оплати</th>
-                <th scope="col">date</th>
+                <th scope="col">Дата оплати</th>
+                <th scope="col">Статус</th>
               </tr>
             </thead>
             <tbody>
@@ -33,7 +34,13 @@
                 <td>{{payment_entry.remaining_balance}}</td>
                 <td>{{ payment_entry.payment.amount_paid }}</td>
                 <td>{{payment_entry.payment.payment_date}}</td>
-                
+                <td>
+                  {% if order_entry.order.is_ordered %}
+                  <span class="checkmark" style="color:green">&#10004</span>
+                  {% else %}
+                  <span style="color:red">&#10060</span>
+                  {% endif %}
+                </td>
               </tr>
                 {% endfor %}
               {% endfor %}

@@ -7,9 +7,9 @@ from store.models import Product, Variation
 class Order(models.Model):
     STATUS = (
         ('New', 'New'),
-        ('Accepted', 'Accepted'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
+        ('Прийнято', 'Прийнято'),
+        ('Виконано', 'Виконано'),
+        ('Скасовано', 'Скасовано'),
     )
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
     order_number = models.CharField(max_length=20)
@@ -40,6 +40,10 @@ class Order(models.Model):
         if not self.pk:
             # If this is a new order set remaining balance to order total
             self.remaining_balance = self.order_total
+        if self.remaining_balance <= 0:
+            self.is_ordered = True
+        else:
+            self.is_ordered = False
         super().save(*args, **kwargs)
 
     def update_remaining_balance(self):
