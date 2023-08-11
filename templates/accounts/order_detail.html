@@ -88,6 +88,7 @@
                           <div class="invoice-footer mt25">
                               <p class="text-center">Дякуємо за співпрацю з нами!</p>
                           </div>
+                          <a href="{% url 'generate_pdf' order_id=order.order_number %}">generate_pdf</a>
                       </div>
                       <!-- col-lg-12 end here -->
                   </div>

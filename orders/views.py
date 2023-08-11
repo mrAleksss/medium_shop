@@ -6,7 +6,10 @@ from .models import Order, Payment, OrderProduct
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-
+# pdf imports
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from weasyprint import HTML
 
 
 def place_order(request, total=0, quantity=0):
@@ -145,8 +148,26 @@ def payments(request):
     context = {
         'order_data': order_data
     }
-    print(order_data)
+
     return render(request, 'orders/payments.html', context)
+
+
+
+# @login_required(login_url='login')
+# def generate_pdf(request):
+#     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+#     context = {
+#         'user_orders': user_orders,
+#     }
+
+#     html_string = render(request, 'orders/invoice.html', context).content
+
+#     pdf_file = HTML(string=html_string).write_pdf()
+
+#     response = HttpResponse(pdf_file, content_type='application/pdf')
+#     response['Content-Disposition'] = 'filename="mypdf.pdf"'
+
+#     return response
     
 
 

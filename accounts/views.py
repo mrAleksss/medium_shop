@@ -17,6 +17,9 @@ import requests
 
 from orders.models import Order, OrderProduct
 
+from django.http import HttpResponse
+from weasyprint import HTML
+
 
 def register(request):
     if request.method == 'POST': 
@@ -284,11 +287,9 @@ def change_password(request):
 def order_detail(request, order_id):
     order_detail = OrderProduct.objects.filter(order__order_number=order_id)
     order = Order.objects.get(order_number=order_id)
-    print(order_detail)
     
     for item in order_detail:
         item.subtotal = item.product_price * item.quantity
-
 
     context = {
         'order_detail': order_detail,
@@ -296,6 +297,28 @@ def order_detail(request, order_id):
     }
 
     return render(request, 'accounts/order_detail.html', context)
+
+
+@login_required(login_url='login')
+def generate_pdf(request, order_id):
+    order = Order.objects.get(user=request.user, order_number=order_id)
+    order_products = OrderProduct.objects.filter(order=order)
+    for item in order_products:
+        item.subtotal = item.product_price * item.quantity
+
+    context = {
+        'order': order,
+        'order_products': order_products,
+    }
+
+    html_string = render(request, 'accounts/order_pdf.html', context).content
+
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="mypdf.pdf"'
+
+    return response
 
 
 
