@@ -6,7 +6,7 @@ from . import views
 
 
 urlpatterns = [
-    path('superadmin/', admin.site.urls),
+    path('davinci/', admin.site.urls),
     
     path('', views.home, name='home'),
     path('store/', include("store.urls")),
