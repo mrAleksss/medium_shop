@@ -8,6 +8,9 @@ class Order(models.Model):
     STATUS = (
         ('New', 'New'),
         ('Прийнято', 'Прийнято'),
+        ('Комплектується', 'Комплектується'),
+        ('Передано до служби доставки', 'Передано до служби доставки'),
+        ('Відправлено', 'Відправлено'),
         ('Виконано', 'Виконано'),
         ('Скасовано', 'Скасовано'),
     )
@@ -30,7 +33,7 @@ class Order(models.Model):
     order_note = models.CharField(max_length=500, blank=True)
     order_total = models.DecimalField(max_digits=14, decimal_places=2)
     remaining_balance = models.DecimalField(max_digits=14, decimal_places=2)
-    status = models.CharField(max_length=10, choices=STATUS, default="New")
+    status = models.CharField(max_length=50, choices=STATUS, default="New")
     ip = models.CharField(blank=True, max_length=20)
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,7 +53,10 @@ class Order(models.Model):
         payments = self.payment_set.all()
         total_paid = sum(payment.amount_paid for payment in payments)
         self.remaining_balance = self.order_total - total_paid
+        print(self.remaining_balance)
         self.save(update_fields=['remaining_balance'])
+        print(self.remaining_balance)
+        
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -67,13 +73,13 @@ class Payment(models.Model):
     amount_paid = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     payment_date = models.DateField(auto_now_add=True)
     payment_status = models.CharField(max_length=50, choices=[
-        ('В очікуванні', 'В очікуванні'),
-        ('Оплочено', 'Оплочено'),
-        ('Часткова оплата', 'Часткова оплата')
-    ], default='В очікуванні')
+        ('Оплата карткою', 'Оплата карткою'),
+        ('Готівка', 'Готівка'),
+        ('Наложенний платіж', 'Наложенний платіж')
+    ], default='Оплата карткою')
 
     def __str__(self):
-        return f"{self.payment_date} - {self.amount_paid} - {self.payment_status}"
+        return f"#{self.order.order_number} - {self.amount_paid} - {self.payment_status} - {self.payment_date}"
     
     def save(self, *args, **kwargs):
         super(Payment, self).save(*args, **kwargs)

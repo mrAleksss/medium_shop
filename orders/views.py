@@ -129,7 +129,7 @@ def payments(request):
 
     for order in user_orders:
         # Retrieve all payments greater then 0 from all users orders 
-        payments = Payment.objects.filter(order=order, amount_paid__gt=0).order_by('-payment_date')
+        payments = Payment.objects.filter(order=order, amount_paid__gt=0).order_by('payment_date')
         remaining_balance = order.order_total
         # Create list for appending data with payment instance and remaining_balance
         payment_data = []

@@ -16,8 +16,6 @@ class OrderPaymentInline(admin.TabularInline):
     extra = 0
 
 
-
-
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_number', 'full_name', 'phone', 'email', 'city', 'order_total', 'remaining_balance', 'status', 'is_ordered', 'created_at']
     list_filter = ['status', 'is_ordered']

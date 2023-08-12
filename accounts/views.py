@@ -225,12 +225,22 @@ def resetPassword(request):
 
 @login_required(login_url='login')
 def my_orders(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).exclude(status='Скасовано').order_by('-created_at')
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        action = request.POST.get('action')
+
+        if action == 'discard':
+            order_to_discard = Order.objects.get(id=order_id)
+            order_to_discard.status = 'Скасовано'
+            order_to_discard.save()
+            messages.success(request, f'замовлення {order_to_discard.order_number} успішно "Скасовано"')
+
     context = {
         "orders": orders,
     }
     return render(request, 'accounts/my_orders.html', context)
-    
+
 
 @login_required(login_url='login')
 def edit_profile(request):

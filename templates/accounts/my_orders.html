@@ -22,26 +22,41 @@
                 <th scope="col">Замовлення #</th>
                 <th scope="col">Контактна особа</th>
                 <th scope="col">Телефон</th>
-                <th scope="col">Сума в Замовленні</th>
                 <th scope="col">Дата</th>
+                <th scope="col">Сума в Замовленні</th>
                 <th scope="col">Статус</th>
               </tr>
             </thead>
             <tbody>
+              {% if messages %}
+                <ul class="messages">
+                  {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
               {% for order in orders %}
+                {% if order.status not in 'Скасовано' %}
               <tr>
                 <th scope="row"><a href="{% url 'order_detail' order.order_number %}">{{order.order_number }}</a></th>
                 <td>{{ order.full_name }}</td>
                 <td>{{ order.phone }}</td>
-                <td>{{ order.order_total }}</td>
                 <td>{{ order.created_at }}</td>
+                <td>{{ order.order_total }}</td>
+                <td>{{order.status}}</td>
                 <td>
-                  {% if order.is_ordered == True %}
-                  <span class="checkmark" style="color: green;">&#10004 Завершено</span>
-                  {% else %}До сплати: <span style="font-weight: bold; color: red;">{{order.remaining_balance}}</span>
+                  {% if order.status == 'New' or order.status == 'Прийнято' %}
+                  <form method="post" action="{% url 'my_orders' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <input type="hidden" name="action" value="discard">
+                    <button type="submit" class="btn btn-danger smaller-button">Скасувати</button>
+                  </form>
                   {% endif %}
-                  </td>
+                </td>
               </tr>
+                {% endif %}
               {% endfor %}
             </tbody>
           </table>
@@ -58,6 +73,12 @@
   
   </section>
   <!-- ========================= SECTION CONTENT END// ========================= -->
+
+  <!-- {% if order.is_ordered == True %}
+  <span class="checkmark" style="color: green;">&#10004 Завершено</span>
+  {% else %}До сплати: <span style="font-weight: bold; color: red;">{{order.remaining_balance}}</span>
+  {% endif %}
+checmarks code  --> 
 
 
 {% endblock %}
