@@ -5,7 +5,7 @@ from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 # Verification email
 from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -19,7 +19,7 @@ from orders.models import Order, OrderProduct
 
 from django.http import HttpResponse
 from weasyprint import HTML
-
+from io import BytesIO
 
 def register(request):
     if request.method == 'POST': 
@@ -311,12 +311,15 @@ def generate_pdf(request, order_id):
         'order_products': order_products,
     }
 
-    html_string = render(request, 'accounts/order_pdf.html', context).content
+    # html_string = render(request, 'accounts/order_pdf.html', context).content
+    template = get_template('accounts/order_pdf.html')
+    html_content = template.render(context)
 
-    pdf_file = HTML(string=html_string).write_pdf()
+    pdf_file = BytesIO()
+    HTML(string=html_content).write_pdf(pdf_file)
 
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="mypdf.pdf"'
+    response = HttpResponse(pdf_file.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'filename="{order_id}.pdf"'
 
     return response
 

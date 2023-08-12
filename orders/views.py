@@ -8,8 +8,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 # pdf imports
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from weasyprint import HTML
+from accounts.views import generate_pdf
 
 
 def place_order(request, total=0, quantity=0):
@@ -80,6 +79,8 @@ def place_order(request, total=0, quantity=0):
                 product = Product.objects.get(id=item.product_id)
                 product.stock -= item.quantity
                 product.save()
+            # generate the PDF using the existing view
+            pdf_file = generate_pdf(request, order.order_number)
 
             # Clear cart
             CartItem.objects.filter(user=request.user).delete()
@@ -91,7 +92,9 @@ def place_order(request, total=0, quantity=0):
                         'order': order,
                     })
             to_email = request.user.email
+            pdf_filename = 'packing_list.pdf'
             send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.attach(pdf_filename, pdf_file.getvalue(), 'application/pdf')
             send_email.send() 
             ordered_products = OrderProduct.objects.filter(order_id=order.id)
 
@@ -150,24 +153,3 @@ def payments(request):
     }
 
     return render(request, 'orders/payments.html', context)
-
-
-
-# @login_required(login_url='login')
-# def generate_pdf(request):
-#     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
-#     context = {
-#         'user_orders': user_orders,
-#     }
-
-#     html_string = render(request, 'orders/invoice.html', context).content
-
-#     pdf_file = HTML(string=html_string).write_pdf()
-
-#     response = HttpResponse(pdf_file, content_type='application/pdf')
-#     response['Content-Disposition'] = 'filename="mypdf.pdf"'
-
-#     return response
-    
-
-
