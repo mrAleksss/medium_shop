@@ -59,7 +59,15 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ item.product.product_code }}</td>
-            <td>{{ item.product.product_name }}</td>
+            <td>{{ item.product.product_name }}
+                <p class="text-muted small">
+                    {% if item.variation.all %}
+                    {% for i in item.variation.all %}
+                        {{ i.variation_category | capfirst }}: {{ i.variation_value | capfirst  }}<br>
+                      {% endfor %}
+                    {% endif %}
+                </p>
+            </td>
             <td>{{ item.quantity }}</td>
             <td>{{ item.product_price }}</td>
             <td>{{ item.subtotal }}</td>
