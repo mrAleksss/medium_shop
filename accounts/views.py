@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from weasyprint import HTML
 from io import BytesIO
 
+
 def register(request):
     if request.method == 'POST': 
         form = RegistrationForm(request.POST)

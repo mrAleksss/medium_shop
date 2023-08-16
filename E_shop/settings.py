@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['velosich-store-env.eba-9mwixpwh.us-west-2.elasticbeanstalk.com']
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
