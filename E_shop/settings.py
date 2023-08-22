@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['velosich-store-env.eba-9mwixpwh.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = []
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -136,7 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 # Location where static located
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
@@ -144,7 +144,7 @@ STATICFILES_DIRS = [
 # Location for staticfiles 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -167,7 +167,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 
 # Exchange rate backend
-OPEN_EXCHANGE_RATES_APP_ID = 'a3f92ade28e748df8874f4d4e6932962'
+OPEN_EXCHANGE_RATES_APP_ID = config('OPEN_EXCHANGE_RATES_APP_ID')
 
 # Default currency
 DEFAULT_CURRENCY = 'USD'
