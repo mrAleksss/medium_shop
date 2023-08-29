@@ -1,0 +1,18 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc 
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+
+# Ignore virtual environment
+venv/
+env/
+
+# Ignore log files
+*.log
+# Elastic Beanstalk Files
+# .elasticbeanstalk/*
+# !.elasticbeanstalk/*.cfg.yml
+# !.elasticbeanstalk/*.global.yml

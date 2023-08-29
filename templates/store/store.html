@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_tags %}
+
+{% block content %}
+<body>
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg">
+  <div class="container">
+    {% if 'search' in request.path %}
+      <h2 class="title-page">Результати пошуку:</h2>
+    {% else %}
+      <h2 class="title-page">VeloSich Store</h2>
+    {% endif %}
+    
+  </div> <!-- container //  -->
+  </section>
+  <!-- ========================= SECTION INTRO END// ========================= -->
+
+  <!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+  <div class="container">
+  
+  <div class="row">
+    
+    <aside class="col-md-3">
+      
+  <div class="card">
+    <article class="filter-group">
+      <header class="card-header">
+        <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+          <i class="icon-control fa fa-chevron-down"></i>
+          <h6 class="title">Категорії</h6>
+        </a>
+      </header>
+      <div class="filter-content collapse show" id="collapse_1" style="">
+        <div class="card-body">
+          
+          <ul class="list-menu">
+            <li><a href="{% url 'store' %}">Усі товари  </a></li>
+            {% for category in links %}
+              <li><a href="{{category.get_url}}"> {{category.category_name}}  </a></li>
+            {% endfor %}
+          </ul>
+  
+        </div> <!-- card-body.// -->
+      </div>
+    </article> <!-- filter-group  .// -->
+    <article class="filter-group">
+      <header class="card-header">
+        <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+          <i class="icon-control fa fa-chevron-down"></i>
+          <h6 class="title">Sizes </h6>
+        </a>
+      </header>
+      <div class="filter-content collapse show" id="collapse_4" style="">
+        <div class="card-body">
+          <label class="checkbox-btn">
+            <input type="checkbox">
+            <span class="btn btn-light"> XS </span>
+          </label>
+  
+          <label class="checkbox-btn">
+            <input type="checkbox">
+            <span class="btn btn-light"> SM </span>
+          </label>
+  
+          <label class="checkbox-btn">
+            <input type="checkbox">
+            <span class="btn btn-light"> LG </span>
+          </label>
+  
+          <label class="checkbox-btn">
+            <input type="checkbox">
+            <span class="btn btn-light"> XXL </span>
+          </label>
+      </div><!-- card-body.// -->
+      </div>
+    </article> <!-- filter-group .// -->
+    <form action="{% url 'search' %}" method="GET">
+
+      <article class="filter-group">
+        <header class="card-header">
+          <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+            <i class="icon-control fa fa-chevron-down"></i>
+            <h6 class="title">Price range </h6>
+          </a>
+        </header>
+        <div class="filter-content collapse show" id="collapse_3" style="">
+          <div class="card-body">
+            
+            <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Min</label>
+              <!-- <input class="form-control" placeholder="$0" type="number"> -->
+                <select name="min_price" class="mr-2 form-control">
+                  <option value="1">1 грн</option>
+                  <option value="10">10 грн</option>
+                  <option value="20">20 грн</option>
+                  <option value="30">30 грн</option>
+                  <option value="40">40 грн</option>
+                  <option value="50">50 грн</option>
+                  <option value="100">100 грн</option>
+                  <option value="150">150 грн</option>
+                  <option value="200">200 грн</option>
+                  <option value="500">500 грн</option>
+                  <option value="1000">1000 грн</option>
+                  <option value="2000">2000 грн</option>
+                  <option value="5000">5000 грн</option>
+              </select>
+            </div>
+            <div class="form-group text-right col-md-6">
+              <label>Max</label>
+                <select name="max_price" class="mr-2 form-control">
+                <option value="1">1 грн</option>
+                <option value="10">10 грн</option>
+                <option value="20">20 грн</option>
+                <option value="30">30 грн</option>
+                <option value="40">40 грн</option>
+                <option value="50">50 грн</option>
+                <option value="100">100 грн</option>
+                <option value="150">150 грн</option>
+                <option value="200">200 грн</option>
+                <option value="500">500 грн</option>
+                <option value="1000">1000 грн</option>
+                <option value="2000">2000 грн</option>
+                <option value="5000">5000 грн</option>
+              </select>
+            </div>
+            </div> <!-- form-row.// -->
+            <button type="submit" class="btn btn-block btn-primary">Apply</button>
+          </div><!-- card-body.// -->
+        </div>
+      </article> <!-- filter-group .// -->
+    </form>
+    
+  </div> <!-- card.// -->
+  
+    </aside> <!-- col.// -->
+    <main class="col-md-9">
+  
+  <header class="border-bottom mb-4 pb-3">
+      <div class="form-inline">
+        <span class="mr-md-auto"><b>{{products_count}}</b> Знайдено </span>
+        
+      </div>
+  </header><!-- sect-heading -->
+  
+  <div class="row">
+    {% if products %}
+   
+      {% for product in products %}
+      <div class="col-md-4">
+        <figure class="card card-product-grid">
+          <div class="img-wrap"> 
+            
+            <a href="{{ product.get_url }}"><img src="{{ product.images.url }}"></a>
+            
+          </div> <!-- img-wrap.// -->
+          <figcaption class="info-wrap">
+            <div class="fix-height">
+              <a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
+              <a href="{{ product.get_url }}" class="title">Код:{{product.product_code}}</a>
+              {% if product.max_discount %}
+              <div class="price-wrap mt-2">
+                <span class="price">{{ product.price_in_uah }} | {{ product.discounted_price }} грн</span>
+                <!-- <del class="price-old">$1980</del> -->
+              </div> <!-- price-wrap.// -->
+                  <p>Max знижка: {{product.max_discount}}%</p>
+                  <p>Кількість для знижки: {{product.min_quantity}}</p>
+              {% else %}
+              <div class="price-wrap mt-2">
+                <span class="price">{{product.price_in_uah}}</span>
+                <!-- <del class="price-old">$1980</del> -->
+              </div> 
+              <p>Очікуйте на знижки</p>
+              {%endif%}
+            </div>
+            
+          </figcaption>
+          <a href="{{ product.get_url }}" class="btn btn-block btn-primary">Детальніше </a>
+        </figure>
+        
+      </div> <!-- col.// -->
+      {%endfor%}
+    {% else %}
+    <div>
+      <h2>За данним запитом результатів не знайдено. </h2>
+    </div>
+    {% endif %}
+  </div> <!-- row end.// -->
+  
+  
+  <nav class="mt-4" aria-label="Page navigation sample">
+    {% if products.has_other_pages %}
+    <ul class="pagination">
+      {% if products.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Назад</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Назад</a></li>
+      {% endif %}
+
+
+      {% for i in products.paginator.page_range %}
+        {% if products.number == i %}
+          <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{i}}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+
+      {% if products.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Вперед</a></li>
+      {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Вперед</a></li>
+      {% endif %}
+    </ul>
+    {% endif %}
+  </nav>
+  
+    </main> <!-- col.// -->
+  
+  </div>
+  
+  </div> <!-- container .//  -->
+  </section>
+</body>
+  <!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

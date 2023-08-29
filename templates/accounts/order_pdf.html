@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .header {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+    .header p {
+        margin: 0;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    .table th {
+        background-color: #f2f2f2;
+    }
+    .total {
+        text-align: right;
+    }
+    .note {
+        border-bottom: 1px solid black;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <p>Телефон: 380970809022</p>
+    <p>Email: veloline8@gmail.com</p>
+</div>
+<p>#{{ order.order_number }}</p>
+
+<h2>Розхідна накладна</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Код</th>
+            <th>Назва Товару</th>
+            <th>Кількість</th>
+            <th>Ціна</th>
+            <th>Сума</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for item in order_products %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.product.product_code }}</td>
+            <td>{{ item.product.product_name }}
+                <p class="text-muted small">
+                    {% if item.variation.all %}
+                    {% for i in item.variation.all %}
+                        {{ i.variation_category | capfirst }}: {{ i.variation_value | capfirst  }}<br>
+                      {% endfor %}
+                    {% endif %}
+                </p>
+            </td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.product_price }}</td>
+            <td>{{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+        <!-- Repeat rows for other products -->
+    </tbody>
+</table>
+
+<div class="total">
+    <p><strong>Total:</strong> {{ order.order_total }} грн</p>
+</div>
+
+<div class="note">
+    <p>{% if order.order_note %}Примітки:  {{order.order_note}} {% else %} Дякуємо за співпрацю!{% endif %}</p>
+</div>
+
+</body>
+</html>
