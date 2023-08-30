@@ -8,7 +8,7 @@
 
 
 
-<div class="container" style="margin: 0 auto;width: 50%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+<div class="container" style="margin: 0 auto; width: 80%; padding: 50px; background: #f1f1f1; margin-top: 50px; margin-bottom: 50px;">
   <div class="row invoice row-printable">
       <div class="col-md-12">
           <!-- col-lg-12 start here -->
@@ -45,7 +45,7 @@
                           </div>
                          
                           <div class="invoice-items">
-                              <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
+                              <div class="table-responsive" style="outline: none;" tabindex="0">
                                   <table class="table table-bordered">
                                       <thead>
                                           <tr>
@@ -58,7 +58,7 @@
                                       </thead>
                                       <tbody>
                                         {% for item in order_detail %}
-                                          <tr>
+                                          <tr class="selected-row">
                                               <td class="text-center">{{ item.product.product_code }}</td>
                                               <td>{{ item.product.product_name }}
                                                 <p class="text-muted small">
@@ -79,7 +79,7 @@
                                       <tfoot>                               
                                           <tr>
                                               <th colspan="4" class="text-right">Загальна Сума Продажу:</th>
-                                              <td class="text-center" style="font-weight: bold;">{{ order.order_total }}</td>
+                                              <td class="text-center selected-row" style="font-weight: bold;">{{ order.order_total }}</td>
                                           </tr>
                                       </tfoot>
                                   </table>

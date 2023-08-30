@@ -86,6 +86,42 @@ footer {
   align-items: center;
 }
 
+ /* Hide specific columns on small screens */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+/* configure order_detail */
+@media (max-width: 767px) {
+  .invoice-details,
+  .invoice-items,
+  .invoice-footer {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+}
+
+.selected-row {
+  background-color: #f9f9f9;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table td {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+@media (max-width: 767px) {
+  .table th,
+  .table td {
+    font-size: 13px;
+  }
+}
 
 
 

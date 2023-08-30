@@ -33,7 +33,7 @@
           <h6 class="title">Категорії</h6>
         </a>
       </header>
-      <div class="filter-content collapse show" id="collapse_1" style="">
+      <div class="filter-content collapse show" id="collapse_1">
         <div class="card-body">
           
           <ul class="list-menu">
@@ -46,37 +46,7 @@
         </div> <!-- card-body.// -->
       </div>
     </article> <!-- filter-group  .// -->
-    <article class="filter-group">
-      <header class="card-header">
-        <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
-          <i class="icon-control fa fa-chevron-down"></i>
-          <h6 class="title">Sizes </h6>
-        </a>
-      </header>
-      <div class="filter-content collapse show" id="collapse_4" style="">
-        <div class="card-body">
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> XS </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> SM </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> LG </span>
-          </label>
-  
-          <label class="checkbox-btn">
-            <input type="checkbox">
-            <span class="btn btn-light"> XXL </span>
-          </label>
-      </div><!-- card-body.// -->
-      </div>
-    </article> <!-- filter-group .// -->
+
     <form action="{% url 'search' %}" method="GET">
 
       <article class="filter-group">
@@ -163,7 +133,7 @@
               <a href="{{ product.get_url }}" class="title">Код:{{product.product_code}}</a>
               {% if product.max_discount %}
               <div class="price-wrap mt-2">
-                <span class="price">{{ product.price_in_uah }} | {{ product.discounted_price }} грн</span>
+                <span class="price">{{ product.price_in_uah.amount|floatformat:0 }} грн | {{ product.discounted_price }} грн</span>
                 <!-- <del class="price-old">$1980</del> -->
               </div> <!-- price-wrap.// -->
                   <p>Max знижка: {{product.max_discount}}%</p>
