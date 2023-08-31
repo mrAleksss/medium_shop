@@ -51,9 +51,11 @@ ul.thumb {
   float: left;
 }
 
+/* Style for thumbnail images */
 ul.thumb li {
   list-style: none;
-  margin: 10px;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
 ul.thumb li img {
@@ -84,6 +86,34 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Simplified styles for img tags */
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  border-style: none;
+}
+
+/* Center text within img-big-wrap links */
+.gallery-wrap .img-big-wrap a {
+  text-align: center;
+}
+
+/* Link color */
+a {
+  color: #3167eb;
+}
+
+/* Ensure consistent box sizing */
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+/* No need for word-wrap on cards */
+.card {
+  overflow-wrap: break-word;
 }
 
  /* Hide specific columns on small screens */
@@ -165,6 +195,17 @@ footer {
 .btn-primary:hover {
   background-color: #0056b3;
   border-color: #0056b3;
+} 
+
+.logo {
+  width: 120px;
+}
+
+/* Apply consistent box sizing to all elements */
+*,
+::before,
+::after {
+  box-sizing: border-box;
 }
 
 

@@ -55,6 +55,9 @@
       </div> 
       <span style="font-weight: 700;">код: {{ single_product.product_code }}</span>
       <hr>
+      <h6>Опис:</h6>
+      <p>{{ single_product.description|linebreaksbr }}</p>
+      <hr>
       <div class="mb-3">
         {% if discounted_prices %}
         <h6>Знижки:</h6>
@@ -68,9 +71,7 @@
         <p>очікуйте на знижки</p>
       </div>
       {% endif %}
-      <p>{{ single_product.description }}</p>
-      
-      
+
       <hr>
       {% if single_product.variation_set.all %}
         <div class="row">
