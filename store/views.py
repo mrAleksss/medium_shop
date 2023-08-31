@@ -77,7 +77,7 @@ def product_detail(request, category_slug, product_slug):
         orderproduct = None
 
     # Get the reviews
-    reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True)
+    reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True).select_related('user__userprofile')
 
     # Get the product_gallery
     product_gallery = ProductGallery.objects.filter(product_id=single_product.id)

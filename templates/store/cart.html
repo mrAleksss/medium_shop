@@ -6,7 +6,7 @@
 {% block content %}
 
 <section class="section-content padding-y bg">
-  <div class="container">
+  <div class="container-fluid">
   
   <!-- ============================ COMPONENT 1 ================================= -->
   {% if not cart_items %}
@@ -87,9 +87,17 @@
         <small class="text-muted"> {{ cart_item.discounted_price }} </small> 
       </div> <!-- price-wrap .// -->
     </td>
-    <td class="text-right"> 
-    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" class="btn btn-danger" onclick="return confirm('Ви точно хочете видалити екземпляр?')"> Видалити</a>
-    </td>
+    <td>
+      <div class="row">
+          <!-- The button is wrapped in a flex container -->
+          <div class="col-12 text-right">
+              <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}"
+                  class="btn btn-danger btn-remove"
+                  onclick="return confirm('Ви точно хочете видалити екземпляр?')"> Видалити</a>
+          </div>
+          <!-- Add other elements if needed -->
+      </div>
+  </td>
   </tr>
   {% endfor %}
   

@@ -178,7 +178,9 @@ CURRENCIES = {
     'USD': ('$', 'US Dollar'),
     
 }
-CURRENCY_SYMBOL = 'грн'
+
+TIME_ZONE = 'Europe/Kiev'
+
 
 
 

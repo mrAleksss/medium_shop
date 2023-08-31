@@ -123,6 +123,50 @@ footer {
   }
 }
 
+@media only screen and (max-width: 360px) {
+  /* Styles for Samsung S8 screen width */
+  .btn-remove {
+      font-size: 10px; /* Adjust the font size */
+      padding: 3px 5px; /* Adjust the padding */
+  }
+}
+
+/* style for navbar */
+.widget-header {
+  text-align: right;
+}
+
+.title {
+  font-size: 14px;
+  color: #555;
+}
+
+.guest-links a,
+.user-links a {
+  margin-left: 10px;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+
+.btn-succes:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
 
 
 
