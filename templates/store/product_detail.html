@@ -6,219 +6,305 @@
 
 <section class="section-content padding-y bg">
   <div class="container">
-  
-  <!-- ============================ COMPONENT 1 ================================= -->
-  <div class="card">
-    <div class="row no-gutters">
-      <aside class="col-md-6">
-        <article class="gallery-wrap">
-          <div class="img-big-wrap mainImage">
-            <!-- Main Image with Fancybox -->
-            <a href="{{ single_product.images.url }}" data-fancybox="gallery" data-caption="Головне зображення">
-              <img src="{{ single_product.images.url }}" alt="main product image" class="main-image">
-            </a>
-          </div>
-        </article>
 
-        <ul class="thumb"> 
-          <li>
-            {% for i in product_gallery %}
-            <!-- Thumbnail Images with Fancybox -->
-            <a href="{{ i.image.url }}" data-fancybox="gallery" data-caption="фото {{forloop.counter}}">
-              <img src="{{ i.image.url }}" alt="Product Image" class="thumbnail-image">
-            </a>
-            {% endfor %}
-          </li>
-        </ul>
-      </aside>
-      <main class="col-md-6 border-left">
+    <!-- ============================ COMPONENT 1 ================================= -->
+    <div class="card">
+      <div class="row no-gutters">
+        <aside class="col-md-6">
+          <article class="gallery-wrap">
+            <div class="img-big-wrap mainImage">
+              <!-- Main Image with Fancybox -->
+              <a href="{{ single_product.images.url }}" data-fancybox="gallery" data-caption="Головне зображення">
+                <img src="{{ single_product.images.url }}" alt="main product image" class="main-image">
+              </a>
+            </div>
+          </article>
 
-<form action="{% url 'add_cart' single_product.id %}" method="POST">
-    {% csrf_token %}
-      <article class="content-body">
-      
-      <h2 class="title">{{ single_product.product_name }}</h2>
-      <div class="rating-star">
-        <span>
-          <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o {% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o {% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o {% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o {% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o {% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <span>{{ single_product.countReview }} відгуки</span>
-        </span>
-      </div>
-      
-      
-      <div class="mb-3"> 
-        <var class="price h4">{{ single_product.price_in_uah.amount|floatformat:0 }} грн</var> 
-      </div> 
-      <span style="font-weight: 700;">код: {{ single_product.product_code }}</span>
-      <hr>
-      <div class="mb-3">
-        {% if discounted_prices %}
-        <h6>Знижки:</h6>
-        <ul>
-          {% for item in discounted_prices %}
+          <ul class="thumb">
+            <li>
+              {% for i in product_gallery %}
+              <!-- Thumbnail Images with Fancybox -->
+              <a href="{{ i.image.url }}" data-fancybox="gallery" data-caption="фото {{forloop.counter}}">
+                <img src="{{ i.image.url }}" alt="Product Image" class="thumbnail-image">
+              </a>
+              {% endfor %}
+            </li>
+          </ul>
+        </aside>
 
-          <li><span style="font-weight: bold;">{{ item.discounted_price|floatformat:0 }}</span>грн  від к-сті: <span style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ item.tier.min_quantity }}шт.</span></li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p>очікуйте на знижки</p>
-      </div>
-      {% endif %}
-      <p>{{ single_product.description }}</p>
-      
-      
-      <hr>
-      {% if single_product.variation_set.all %}
-        <div class="row">
-          <div class="item-option-select">
-            <h6>Choose Color</h6>
-         <select name="color" class="form-control" required>
-          <option value="" disabled selected>select</option>
-          {% for i in single_product.variation_set.colors %}
-            <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-          {% endfor %}
-         </select>
-          </div>
-        </div> <!-- row.// -->
-        
-        
-        <div class="row">
-          <div class="item-option-select">
-            <h6>Select Size</h6>
-            <select name="size" class="form-control">
-              <option value="" disabled selected>select</option>
-              {% for i in single_product.variation_set.sizes %}
-              <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-            {% endfor %}
-             </select> 
-          </div>
-        </div> <!-- row.// -->
-        {% endif %}
+        <main class="col-md-6 border-left">
+          <form action="{% url 'add_cart' single_product.id %}" method="POST">
+            {% csrf_token %}
+            <div class="text-right mr-3">
+              <a href="#" id="description-tab">Опис</a>
+              <a href="{% url 'characteristics' %}" id="characteristics">Характеристики</a>
+            </div>
+            <article class="content-body" id="characteristics-container">
+              <h2 class="title">{{ single_product.product_name }}</h2>
+              <div class="rating-star">
+                <span>
+                  <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o {% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o {% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o {% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o {% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o {% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <span>{{ single_product.countReview }} відгуки</span>
+                </span>
+              </div>
 
-        <hr>
-        {% if single_product.stock <= 0 %}
-          <h5>Немає в наявності</h5>
-        {% else %}
-          <button type="submit" class="btn  btn-success"> <span class="text">Додати в Кошик</span> <i class="fas fa-shopping-cart"></i>  </button>
-        {% endif %}
-      </article> <!-- product-info-aside .// -->
-</form>
 
-      </main> <!-- col.// -->
-    </div> <!-- row.// -->
-  </div> <!-- card.// -->
-  <!-- ============================ COMPONENT 1 END .// ================================= -->
-  
-  <br>
-  
-  <div class="row">
-        <div class="col-md-9">
-  
-   
+              <div class="mb-3">
+                <var class="price h4">{{ single_product.price_in_uah.amount|floatformat:0 }} грн</var>
+              </div>
+              <span style="font-weight: 700;">код: {{ single_product.product_code }}</span>
+              <hr>
+              <div class="mb-3">
+                {% if discounted_prices %}
+                <h6>Знижки:</h6>
+                <ul>
+                  {% for item in discounted_prices %}
 
-    <form action="{% url 'submit_review' single_product.id %}" method="POST">
-      {% csrf_token %}
-      <h5>Напишіть свій відгук...</h5>
-      
-      <div>
-        <!-- Rating stars -->
-        <label>Як ви оцінюєте цей продукт?</label>
-        <br>
-        <div class="rate">
-          <input type="radio" name="rating" id="rating10" value="5" required /><label for="rating10" title="5"></label>
-          <input type="radio" name="rating" id="rating9" value="4.5" required /><label for="rating9" class="half" title="4.5"></label>
-          <input type="radio" name="rating" id="rating8" value="4" required /><label for="rating8" title="4"></label>
-          <input type="radio" name="rating" id="rating7" value="3.5" required /><label for="rating7" class="half" title="3.5"></label>
-          <input type="radio" name="rating" id="rating6" value="3" required /><label for="rating6" title="3"></label>
-          <input type="radio" name="rating" id="rating5" value="2.5" required /><label for="rating5" class="half" title="2.5"></label>
-          <input type="radio" name="rating" id="rating4" value="2" required /><label for="rating4" title="2"></label>
-          <input type="radio" name="rating" id="rating3" value="1.5" required /><label for="rating3" class="half" title="1.5"></label>
-          <input type="radio" name="rating" id="rating2" value="1" required /><label for="rating2" title="1"></label>
-          <input type="radio" name="rating" id="rating1" value="0.5" required /><label for="rating1" class="half" title="0.5"></label>
-        </div>
-<br>
-        Заголовок: 
-        <input type="text" class="form-control" name="subject">
-        <br>
-        Відгук:
-        <textarea name="review" rows="4" class="form-control"></textarea>
-        <br>
-        {% if user.is_authenticated %}
-          {% if orderproduct %}
-        <input type="submit" value="Надіслати Відгук" class="btn btn-primary">
-          {% else %}
-          <p>Щоб опублікувати свій Відгук про продукт, вам потрібно спочатку його у нас купити, щоб оцінити...</p>
-          {% endif %}
-        {% else %}
-        <p>Щоб надіслати Відгук, ви маєте авторизуватися...<span><a href="{% url 'login' %}">Увійти зараз.</a></span></p>
-        {% endif %}
-      </div>
-{% include 'includes/alerts.html' %}
-    </form>
+                  <li><span style="font-weight: bold;">{{ item.discounted_price|floatformat:0 }}</span>грн від к-сті:
+                    <span style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ item.tier.min_quantity }}шт.</span>
+                  </li>
+                  {% endfor %}
+                </ul>
+                {% else %}
+                <p>очікуйте на знижки</p>
+              </div>
+              {% endif %}
+              <p>{{ single_product.description }}</p>
+
+
+              <hr>
+              {% if single_product.variation_set.all %}
+              <div class="row">
+                <div class="item-option-select">
+                  <h6>Choose Color</h6>
+                  <select name="color" class="form-control" required>
+                    <option value="" disabled selected>select</option>
+                    {% for i in single_product.variation_set.colors %}
+                    <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div> <!-- row.// -->
+
+
+              <div class="row">
+                <div class="item-option-select">
+                  <h6>Select Size</h6>
+                  <select name="size" class="form-control">
+                    <option value="" disabled selected>select</option>
+                    {% for i in single_product.variation_set.sizes %}
+                    <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div> <!-- row.// -->
+              {% endif %}
+
+              <hr>
+              {% if single_product.stock <= 0 %} <h5>Немає в наявності</h5>
+                {% else %}
+                <button type="submit" class="btn  btn-success"> <span class="text">Додати в Кошик</span> <i
+                    class="fas fa-shopping-cart"></i> </button>
+                {% endif %}
+            </article> <!-- product-info-aside .// -->
+          </form>
+
+        </main> <!-- col.// -->
+      </div> <!-- row.// -->
+    </div> <!-- card.// -->
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+
     <br>
-    <header class="section-heading">
-      <h3>Відгуки клієнта </h3>
-      <div class="rating-star">
-        <span>
-          <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o {% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o {% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o {% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o {% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o {% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
-          <span>{{ single_product.countReview }} відгуки</span>
-        </span>
-      </div>
-      
-    </header>
-    {% for review in reviews %}
-    <article class="box mb-3">
-      <div class="icontext w-100">
-        <img src="{{ review.user.userprofile.profile_picture.url }}" class="img-xs icon rounded-circle" alt="{{ review.user.first_name }}">
-        <div class="text">
-          <span class="date text-muted float-md-right">{{ review.updated_at }} </span>  
-          <h6 class="mb-1">{{ review.user.full_name }} </h6>
+
+    <div class="row">
+      <div class="col-md-9">
+
+
+
+        <form action="{% url 'submit_review' single_product.id %}" method="POST">
+          {% csrf_token %}
+          <h5>Напишіть свій відгук...</h5>
+
+          <div>
+            <!-- Rating stars -->
+            <label>Як ви оцінюєте цей продукт?</label>
+            <br>
+            <div class="rate">
+              <input type="radio" name="rating" id="rating10" value="5" required /><label for="rating10"
+                title="5"></label>
+              <input type="radio" name="rating" id="rating9" value="4.5" required /><label for="rating9" class="half"
+                title="4.5"></label>
+              <input type="radio" name="rating" id="rating8" value="4" required /><label for="rating8"
+                title="4"></label>
+              <input type="radio" name="rating" id="rating7" value="3.5" required /><label for="rating7" class="half"
+                title="3.5"></label>
+              <input type="radio" name="rating" id="rating6" value="3" required /><label for="rating6"
+                title="3"></label>
+              <input type="radio" name="rating" id="rating5" value="2.5" required /><label for="rating5" class="half"
+                title="2.5"></label>
+              <input type="radio" name="rating" id="rating4" value="2" required /><label for="rating4"
+                title="2"></label>
+              <input type="radio" name="rating" id="rating3" value="1.5" required /><label for="rating3" class="half"
+                title="1.5"></label>
+              <input type="radio" name="rating" id="rating2" value="1" required /><label for="rating2"
+                title="1"></label>
+              <input type="radio" name="rating" id="rating1" value="0.5" required /><label for="rating1" class="half"
+                title="0.5"></label>
+            </div>
+            <br>
+            Заголовок:
+            <input type="text" class="form-control" name="subject">
+            <br>
+            Відгук:
+            <textarea name="review" rows="4" class="form-control"></textarea>
+            <br>
+            {% if user.is_authenticated %}
+            {% if orderproduct %}
+            <input type="submit" value="Надіслати Відгук" class="btn btn-primary">
+            {% else %}
+            <p>Щоб опублікувати свій Відгук про продукт, вам потрібно спочатку його у нас купити, щоб оцінити...</p>
+            {% endif %}
+            {% else %}
+            <p>Щоб надіслати Відгук, ви маєте авторизуватися...<span><a href="{% url 'login' %}">Увійти
+                  зараз.</a></span></p>
+            {% endif %}
+          </div>
+          {% include 'includes/alerts.html' %}
+        </form>
+        <br>
+        <header class="section-heading">
+          <h3>Відгуки клієнта </h3>
           <div class="rating-star">
             <span>
-              <i class="fa fa-star{% if review.rating == 0.5 %}-half-o {% elif review.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
-              <i class="fa fa-star{% if review.rating == 1.5 %}-half-o {% elif review.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
-              <i class="fa fa-star{% if review.rating == 2.5 %}-half-o {% elif review.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
-              <i class="fa fa-star{% if review.rating == 3.5 %}-half-o {% elif review.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
-              <i class="fa fa-star{% if review.rating == 4.5 %}-half-o {% elif review.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+              <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o {% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}"
+                aria-hidden="true"></i>
+              <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o {% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}"
+                aria-hidden="true"></i>
+              <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o {% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}"
+                aria-hidden="true"></i>
+              <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o {% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}"
+                aria-hidden="true"></i>
+              <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o {% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}"
+                aria-hidden="true"></i>
+              <span>{{ single_product.countReview }} відгуки</span>
             </span>
           </div>
-          
-        </div>
-      </div> <!-- icontext.// -->
-      <div class="mt-3">
-        <h6>{{ review.subject }}</h6>
-        <p>
-          {{ review.review }}
-        </p>	
-      </div>
-    </article>
-    {% endfor %}
-  
-    
-  
-    </div> <!-- col.// -->
-  </div> <!-- row.// -->
-  
-  
-  </div> <!-- container .//  -->
-  </section>
-  <!-- ========================= SECTION CONTENT END// ========================= -->
 
-  <script>
+        </header>
+        {% for review in reviews %}
+        <article class="box mb-3">
+          <div class="icontext w-100">
+            <img src="{{ review.user.userprofile.profile_picture.url }}" class="img-xs icon rounded-circle"
+              alt="{{ review.user.first_name }}">
+            <div class="text">
+              <span class="date text-muted float-md-right">{{ review.updated_at }} </span>
+              <h6 class="mb-1">{{ review.user.full_name }} </h6>
+              <div class="rating-star">
+                <span>
+                  <i class="fa fa-star{% if review.rating == 0.5 %}-half-o {% elif review.rating < 1 %}-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if review.rating == 1.5 %}-half-o {% elif review.rating < 2 %}-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if review.rating == 2.5 %}-half-o {% elif review.rating < 3 %}-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if review.rating == 3.5 %}-half-o {% elif review.rating < 4 %}-o {% endif %}"
+                    aria-hidden="true"></i>
+                  <i class="fa fa-star{% if review.rating == 4.5 %}-half-o {% elif review.rating < 5 %}-o {% endif %}"
+                    aria-hidden="true"></i>
+                </span>
+              </div>
+
+            </div>
+          </div> <!-- icontext.// -->
+          <div class="mt-3">
+            <h6>{{ review.subject }}</h6>
+            <p>
+              {{ review.review }}
+            </p>
+          </div>
+        </article>
+        {% endfor %}
+
+
+
+      </div> <!-- col.// -->
+    </div> <!-- row.// -->
+
+
+  </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+<script>
   Fancybox.bind("[data-fancybox]", {
     // Your custom options
   });
-  </script>
+</script>
+
+<script>
+// Зберігаємо початковий вміст контейнера при загрузці сторінки
+const initialContent = document.getElementById('characteristics-container').innerHTML
+
+// Обробник подій для посилання на опис і відновлення вмістимого контейнера
+document.addEventListener('click', function(event) {
+  event.preventDefault()
+  const container = document.getElementById('characteristics-container')
+  container.innerHTML = initialContent
+})
+
+  // Підключення обробника подій для посилання Характеристики
+document.getElementById('characteristics').addEventListener('click', function(event) {
+    event.preventDefault()
+    // Далі ми можемо виконати Ajax запит для отримання характеристик велосипеда з бази данних
+    fetch('/store/characteristics/')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        // Створіть таблицю характеристик і додайте її в контейнер
+        const table = createCharTable(data) // нема розуміння що це, функція чи щось інше???
+        document.getElementById('characteristics-container').innerHTML = ''
+        document.getElementById('characteristics-container').appendChild(table)
+      })
+      .catch(error => console.error(error))
+})
+
+// Функція для створення характеристик на основі данних
+function createCharTable(data) {
+    const table = document.createElement('table')
+    console.log(table)
+    // Тут створюємо заголовки та рядки таблиці з данними із перемінної data
+    const headerRow = table.insertRow()
+    const headers = ['Characteristics', 'Value']
+
+    headers.forEach(headerText => {
+      const th = document.createElement('th')
+      th.textContent = headerText
+      headerRow.appendChild(th)
+    })
+    // Створюємо рядки таблиці і заповнюємо данними зі змінної data
+    data.forEach(item => {
+      const row = table.insertRow()
+      const cell1 = row.insertCell(0)
+      const cell2 = row.insertCell(1)
+
+      cell1.textContent = item.name
+      cell2.textContent = item.value
+    })
+
+    return table
+}
 
 
-  {% endblock %}
-  
- 
+</script>
+
+
+{% endblock %}

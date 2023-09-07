@@ -12,4 +12,5 @@ urlpatterns = [
     path("info/", views.info, name="info"),
     path("about/", views.about, name="about"),
     path("return_info/", views.return_info, name="return_info"),
+    path("characteristics/", views.char_endpoint, name="characteristics"),
 ]

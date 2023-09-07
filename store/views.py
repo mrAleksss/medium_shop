@@ -14,6 +14,17 @@ from .forms import ReviewForm, PriceRangeForm
 from django.contrib import messages
 from orders.models import OrderProduct
 
+from django.http import JsonResponse
+
+
+def char_endpoint(request):
+    # Тут отримуємо данні про характеристики велосипеда з бази данних чи іншого джерела
+    data = [
+        {'name': 'Characteristic 1', 'value': 'size 1'},
+        {'name': 'Characteristic 2', 'value': 'shifter 2'}
+    ]
+    return JsonResponse(data, safe=False)
+
 
 def store(request, category_slug=None):
     categories = None
@@ -103,8 +114,7 @@ def search(request):
 
     if request.method == 'GET':
         price_form = PriceRangeForm(request.GET)
-
-        print(request.GET)
+        products = []
         if 'keyword' in request.GET:
             keyword = request.GET['keyword']
             if keyword:
@@ -115,13 +125,10 @@ def search(request):
             min_price = Decimal(min_price)
             max_price = price_form.cleaned_data['max_price']
             max_price = Decimal(max_price)
-            print(min_price)
-            print(max_price)
             products = Product.objects.filter(price_in_uah__gte=min_price, price_in_uah__lte=max_price)
-            print(price_form.errors)
+
             products_count = products.count()
         else:
-            print(price_form.errors)
             products = []
     
 
