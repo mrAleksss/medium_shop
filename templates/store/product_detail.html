@@ -8,7 +8,8 @@
   <div class="container">
 
     <!-- ============================ COMPONENT 1 ================================= -->
-    <div class="card">
+    <a href="#" id="description-tab" style="display: none;">До опису</a>
+    <div class="card" id="characteristics-container">
       <div class="row no-gutters">
         <aside class="col-md-6">
           <article class="gallery-wrap">
@@ -36,10 +37,13 @@
           <form action="{% url 'add_cart' single_product.id %}" method="POST">
             {% csrf_token %}
             <div class="text-right mr-3">
-              <a href="#" id="description-tab">Опис</a>
+    
               <a href="{% url 'characteristics' %}" id="characteristics">Характеристики</a>
             </div>
-            <article class="content-body" id="characteristics-container">
+            <article class="content-body">
+
+              <table id="characteristics-table"></table>
+
               <h2 class="title">{{ single_product.product_name }}</h2>
               <div class="rating-star">
                 <span>
@@ -259,19 +263,28 @@ document.getElementById('description-tab').addEventListener('click', function(ev
   event.preventDefault()
   const container = document.getElementById('characteristics-container')
   container.innerHTML = initialContent
+  document.getElementById('description-tab').style.display = 'none'
 })
 
   // Підключення обробника подій для посилання Характеристики
 document.getElementById('characteristics').addEventListener('click', function(event) {
     event.preventDefault()
+    let characteristicsData = null
     // Далі ми можемо виконати Ajax запит для отримання характеристик велосипеда з бази данних
     fetch('{% url "characteristics" %}')
       .then(response => response.json())
       .then(data => {
         // Створіть таблицю характеристик і додайте її в контейнер
-        const table = createCharTable(data.characteristics) 
-        document.getElementById('characteristics-container').innerHTML = ''
-        document.getElementById('characteristics-container').appendChild(table)
+      characteristicsData = data.characteristics
+      if (characteristicsData) {
+       // Создать таблицу с данными о характеристиках
+      const table = createCharTable(characteristicsData);
+       // Очистить контейнер и добавить таблицу
+      document.getElementById('characteristics-container').innerHTML = '';
+      document.getElementById('characteristics-container').appendChild(table);
+       // Показать кнопку "Описание"
+      document.getElementById('description-tab').style.display = 'block';
+     }
       })
       .catch(error => console.error(error))
 })
@@ -279,6 +292,8 @@ document.getElementById('characteristics').addEventListener('click', function(ev
 // Функція для створення характеристик на основі данних
 function createCharTable(data) {
     const table = document.createElement('table')
+    table.id = 'characteristics-table'
+    document.getElementById('characteristics-container').appendChild(table)
     // Тут створюємо заголовки та рядки таблиці з данними із перемінної data
     const headerRow = table.insertRow()
     const headers = ['id', 'Розмір коліс', 'Тип гальм', 'Матеріал рами', 'Розмір рами', 'Вага', 'Задній перемикач', 'Ручки перемикання', 'Вилка', 'Касета/Трещітка', 'Шатун', 'К-ть шв.', 'Задня втулка', 'Передня втулка']

@@ -167,6 +167,26 @@ footer {
   border-color: #0056b3;
 }
 
+/* styles for characteristic tables */
+#characteristics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+#characteristics-table th,
+#characteristics-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 767px) {
+  #characteristics-table {
+    font-size: 14px;
+  }
+}
 
 
 
