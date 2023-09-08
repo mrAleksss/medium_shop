@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Variation, ReviewRating, ProductGallery, PriceTier, Rate_to_uah
+from .models import Product, Variation, ReviewRating, ProductGallery, PriceTier, Rate_to_uah, BicycleCharacteristics
 import admin_thumbnails
 
 
@@ -29,6 +29,7 @@ class PriceTierAdmin(admin.ModelAdmin):
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Variation, VariationAdmin)
+admin.site.register(BicycleCharacteristics)
 admin.site.register(ReviewRating)
 admin.site.register(ProductGallery)
 admin.site.register(Rate_to_uah)

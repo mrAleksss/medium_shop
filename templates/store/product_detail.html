@@ -255,7 +255,7 @@
 const initialContent = document.getElementById('characteristics-container').innerHTML
 
 // Обробник подій для посилання на опис і відновлення вмістимого контейнера
-document.addEventListener('click', function(event) {
+document.getElementById('description-tab').addEventListener('click', function(event) {
   event.preventDefault()
   const container = document.getElementById('characteristics-container')
   container.innerHTML = initialContent
@@ -265,12 +265,11 @@ document.addEventListener('click', function(event) {
 document.getElementById('characteristics').addEventListener('click', function(event) {
     event.preventDefault()
     // Далі ми можемо виконати Ajax запит для отримання характеристик велосипеда з бази данних
-    fetch('/store/characteristics/')
+    fetch('{% url "characteristics" %}')
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         // Створіть таблицю характеристик і додайте її в контейнер
-        const table = createCharTable(data) // нема розуміння що це, функція чи щось інше???
+        const table = createCharTable(data.characteristics) 
         document.getElementById('characteristics-container').innerHTML = ''
         document.getElementById('characteristics-container').appendChild(table)
       })
@@ -280,10 +279,9 @@ document.getElementById('characteristics').addEventListener('click', function(ev
 // Функція для створення характеристик на основі данних
 function createCharTable(data) {
     const table = document.createElement('table')
-    console.log(table)
     // Тут створюємо заголовки та рядки таблиці з данними із перемінної data
     const headerRow = table.insertRow()
-    const headers = ['Characteristics', 'Value']
+    const headers = ['id', 'Розмір коліс', 'Тип гальм', 'Матеріал рами', 'Розмір рами', 'Вага', 'Задній перемикач', 'Ручки перемикання', 'Вилка', 'Касета/Трещітка', 'Шатун', 'К-ть шв.', 'Задня втулка', 'Передня втулка']
 
     headers.forEach(headerText => {
       const th = document.createElement('th')
@@ -295,9 +293,33 @@ function createCharTable(data) {
       const row = table.insertRow()
       const cell1 = row.insertCell(0)
       const cell2 = row.insertCell(1)
+      const cell3 = row.insertCell(2)
+      const cell4 = row.insertCell(3)
+      const cell5 = row.insertCell(4)
+      const cell6 = row.insertCell(5)
+      const cell7 = row.insertCell(6)
+      const cell8 = row.insertCell(7)
+      const cell9 = row.insertCell(8)
+      const cell10 = row.insertCell(9)
+      const cell11 = row.insertCell(10)
+      const cell12 = row.insertCell(11)
+      const cell13 = row.insertCell(12)
+      const cell14 = row.insertCell(13)
 
-      cell1.textContent = item.name
-      cell2.textContent = item.value
+      cell1.textContent = item.bicycle_id
+      cell2.textContent = item.wheel_diameter
+      cell3.textContent = item.brake_type
+      cell4.textContent = item.frame_material
+      cell5.textContent = item.frame_size
+      cell6.textContent = item.weight
+      cell7.textContent = item.rear_derailleur
+      cell8.textContent = item.gear_shifter
+      cell9.textContent = item.fork
+      cell10.textContent = item.cassete_ratchet
+      cell11.textContent = item.crank
+      cell12.textContent = item.speed_count
+      cell13.textContent = item.wheel_rear_hub
+      cell14.textContent = item.wheel_front_hub
     })
 
     return table

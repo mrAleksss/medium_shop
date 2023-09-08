@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, ReviewRating, ProductGallery, PriceTier
+from .models import Product, ReviewRating, ProductGallery, PriceTier, BicycleCharacteristics
 from category.models import Category
 from django.db.models import Q, Max, F, Subquery, OuterRef
 from djmoney.money import Money
@@ -19,11 +19,36 @@ from django.http import JsonResponse
 
 def char_endpoint(request):
     # Тут отримуємо данні про характеристики велосипеда з бази данних чи іншого джерела
-    data = [
-        {'name': 'Characteristic 1', 'value': 'size 1'},
-        {'name': 'Characteristic 2', 'value': 'shifter 2'}
-    ]
-    return JsonResponse(data, safe=False)
+    try:
+        bicycles = Product.objects.all()
+        characteristics_list = []
+        for bicycle in bicycles:
+            try:
+                bicycle_characteristics = BicycleCharacteristics.objects.get(bicycle=bicycle)
+                characteristics_dict = {
+                    'bicycle_id': bicycle.id,
+                    'wheel_diameter': bicycle_characteristics.wheel_diameter,
+                    'brake_type': bicycle_characteristics.brake_type,
+                    'frame_material': bicycle_characteristics.frame_material,
+                    'frame_size': bicycle_characteristics.frame_size,
+                    'weight': bicycle_characteristics.weight,
+                    'rear_derailleur': bicycle_characteristics.rear_derailleur,
+                    'gear_shifter': bicycle_characteristics.gear_shifter,
+                    'fork': bicycle_characteristics.fork,
+                    'cassete_ratchet': bicycle_characteristics.cassete_ratchet,
+                    'crank': bicycle_characteristics.crank,
+                    'speed_count': bicycle_characteristics.speed_count,
+                    'wheel_rear_hub': bicycle_characteristics.wheel_rear_hub,
+                    'wheel_front_hub': bicycle_characteristics.wheel_front_hub
+                }
+                characteristics_list.append(characteristics_dict)
+            except BicycleCharacteristics.DoesNotExist:
+                pass
+            return JsonResponse({'characteristics': characteristics_list})
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Велосипеды не найдены'}, status=404)
+    
+
 
 
 def store(request, category_slug=None):

@@ -96,6 +96,26 @@ class Variation(models.Model):
         return self.variation_value
     
 
+class BicycleCharacteristics(models.Model):
+    bicycle = models.ForeignKey(Product, on_delete=models.CASCADE)
+    wheel_diameter = models.CharField(max_length=100, blank=True, null=True)
+    brake_type = models.CharField(max_length=100, blank=True, null=True)
+    frame_material = models.CharField(max_length=100, blank=True, null=True)
+    frame_size = models.CharField(max_length=100, blank=True, null=True)
+    weight = models.CharField(max_length=100, blank=True, null=True)
+    rear_derailleur = models.CharField(max_length=100, blank=True, null=True)
+    gear_shifter = models.CharField(max_length=100, blank=True, null=True)
+    fork = models.CharField(max_length=100, blank=True, null=True)
+    cassete_ratchet = models.CharField(max_length=100, blank=True, null=True)
+    crank = models.CharField(max_length=100, blank=True, null=True)
+    speed_count = models.CharField(max_length=100, blank=True, null=True)
+    wheel_rear_hub = models.CharField(max_length=100, blank=True, null=True)
+    wheel_front_hub = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f'Характеристики для велосипеда {self.bicycle}'
+    
+
 class ReviewRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
