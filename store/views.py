@@ -18,15 +18,15 @@ from django.http import JsonResponse
 
 
 def char_endpoint(request):
-    # Тут отримуємо данні про характеристики велосипеда з бази данних чи іншого джерела
     try:
         bicycles = Product.objects.all()
-        characteristics_list = []
+        product_code = request.GET.get('productCode')
         for bicycle in bicycles:
             try:
-                bicycle_characteristics = BicycleCharacteristics.objects.get(bicycle=bicycle)
+                bicycle_characteristics = BicycleCharacteristics.objects.get(bicycle__product_code=product_code)
+                print(bicycle_characteristics)
                 characteristics_dict = {
-                    'bicycle_id': bicycle.id,
+                    'bicycle_code': bicycle.product_code,
                     'wheel_diameter': bicycle_characteristics.wheel_diameter,
                     'brake_type': bicycle_characteristics.brake_type,
                     'frame_material': bicycle_characteristics.frame_material,
@@ -41,10 +41,13 @@ def char_endpoint(request):
                     'wheel_rear_hub': bicycle_characteristics.wheel_rear_hub,
                     'wheel_front_hub': bicycle_characteristics.wheel_front_hub
                 }
-                characteristics_list.append(characteristics_dict)
+                print(characteristics_dict['bicycle_code'])
+                return JsonResponse({'characteristics': characteristics_dict})
             except BicycleCharacteristics.DoesNotExist:
-                pass
-            return JsonResponse({'characteristics': characteristics_list})
+                print(f"Characteristics not found for bicycle with ID {bicycle.id}")
+
+        return JsonResponse({'error': 'Характеристики не знайдені для данного велосипеда'}, status=404)
+
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Велосипеды не найдены'}, status=404)
     
